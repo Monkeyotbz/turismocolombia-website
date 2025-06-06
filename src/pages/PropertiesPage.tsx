@@ -4,12 +4,10 @@ import PropertyCard, { PropertyType } from '../components/PropertyCard';
 import FilterSidebar, { FilterState } from '../components/FilterSidebar';
 import { Sliders, RefreshCw } from 'lucide-react';
 
-// Mock properties data
-import { properties } from '../data/properties';
-
 const PropertiesPage: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const [filteredProperties, setFilteredProperties] = useState<PropertyType[]>(properties);
+  const [allProperties, setAllProperties] = useState<PropertyType[]>([]);
+  const [filteredProperties, setFilteredProperties] = useState<PropertyType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState<FilterState>({
@@ -19,60 +17,61 @@ const PropertiesPage: React.FC = () => {
     rating: null,
   });
 
-  // Sorting options
   const [sortOption, setSortOption] = useState('recommended');
-  
-  // Extract search params
   const destination = searchParams.get('destination') || '';
   const checkIn = searchParams.get('checkIn') || '';
   const checkOut = searchParams.get('checkOut') || '';
   const guests = Number(searchParams.get('guests')) || 2;
 
-  // Apply filters effect
+  // Cargar propiedades desde el backend
   useEffect(() => {
     setIsLoading(true);
-    
-    // Simulate loading time
+    fetch('http://localhost:5000/api/properties')
+      .then(res => res.json())
+      .then(data => {
+        setAllProperties(data);
+        setIsLoading(false);
+      })
+      .catch(() => setIsLoading(false));
+  }, []);
+
+  // Aplica filtros y ordenamiento sobre allProperties
+  useEffect(() => {
+    setIsLoading(true);
     const timer = setTimeout(() => {
-      let results = [...properties];
-      
-      // Filter by destination if provided
+      let results = [...allProperties];
+
       if (destination) {
-        results = results.filter(property => 
+        results = results.filter(property =>
           property.location.toLowerCase().includes(destination.toLowerCase())
         );
       }
-      
-      // Apply price filter
-      results = results.filter(property => 
-        property.price >= activeFilters.priceRange[0] && 
+
+      results = results.filter(property =>
+        property.price >= activeFilters.priceRange[0] &&
         property.price <= activeFilters.priceRange[1]
       );
-      
-      // Apply property type filter
+
       if (activeFilters.propertyTypes.length > 0) {
-        results = results.filter(property => 
+        results = results.filter(property =>
           activeFilters.propertyTypes.includes(property.type)
         );
       }
-      
-      // Apply amenities filter
+
       if (activeFilters.amenities.length > 0) {
-        results = results.filter(property => 
-          activeFilters.amenities.every(amenity => 
+        results = results.filter(property =>
+          activeFilters.amenities.every(amenity =>
             property.amenities.includes(amenity)
           )
         );
       }
-      
-      // Apply rating filter
+
       if (activeFilters.rating !== null) {
-        results = results.filter(property => 
+        results = results.filter(property =>
           property.rating >= activeFilters.rating!
         );
       }
-      
-      // Apply sorting
+
       switch (sortOption) {
         case 'price-low':
           results = results.sort((a, b) => a.price - b.price);
@@ -84,16 +83,15 @@ const PropertiesPage: React.FC = () => {
           results = results.sort((a, b) => b.rating - a.rating);
           break;
         default:
-          // Recommended sorting (default) - no specific logic for now
           break;
       }
-      
+
       setFilteredProperties(results);
       setIsLoading(false);
     }, 500);
-    
+
     return () => clearTimeout(timer);
-  }, [destination, activeFilters, sortOption]);
+  }, [allProperties, destination, activeFilters, sortOption]);
 
   const handleApplyFilters = (filters: FilterState) => {
     setActiveFilters(filters);

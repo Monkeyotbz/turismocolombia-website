@@ -157,6 +157,17 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// Endpoint para obtener todas las propiedades
+app.get('/api/properties', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM properties');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener propiedades:', error);
+    res.status(500).json({ message: 'Error al obtener propiedades' });
+  }
+});
+
 app.listen(process.env.PORT || 5000, () => {
   console.log('Servidor backend escuchando en el puerto', process.env.PORT || 5000);
 });

@@ -20,7 +20,7 @@ const SignupPage: React.FC = () => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     if (token) {
-      fetch(`http://localhost:5000/api/confirmar-correo?token=${token}`)
+      fetch(`http://localhost:5000/confirmar-correo?token=${token}`)
         .then(async (res) => {
           const text = await res.text();
           setConfirmationResult(text);
@@ -43,7 +43,7 @@ const SignupPage: React.FC = () => {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/api/signup', {
+      const res = await fetch('http://localhost:5000/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

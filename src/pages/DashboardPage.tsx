@@ -26,11 +26,18 @@ const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user.email) return;
+    if (!user || !user.email) {
+      navigate("/login");
+      return;
+    }
     fetch(`http://localhost:5000/api/reservas?email=${user.email}`)
       .then(res => res.json())
       .then(data => setReservas(data));
-  }, [user.email]);
+  }, [navigate]);
+
+  if (!user) {
+    return null; // O un loader
+  }
 
   const resumenData = [
     { name: "Reservas", value: 2 },

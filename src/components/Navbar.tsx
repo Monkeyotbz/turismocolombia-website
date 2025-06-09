@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useUser } from '../context/UserContext'; // Importa el contexto
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [user, setUser] = useState<{ name?: string; email?: string; rol?: string } | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const { user, setUser } = useUser(); // Usa el contexto global
 
   const isHome = location.pathname === '/';
 
@@ -18,27 +20,11 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Efecto para leer usuario de localStorage cuando cambia la ruta o el storage
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
-    setUser(storedUser);
-  }, [location.pathname, isOpen]);
-
-  // Agrega este efecto extra para forzar actualización cada vez que el componente se renderiza
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
-      setUser(storedUser);
-    }, 500); // cada medio segundo
-
-    return () => clearInterval(interval);
-  }, []);
-
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
-    setUser(null);
+    setUser(null); // Limpia el usuario del contexto
     navigate('/');
   };
 
@@ -66,7 +52,6 @@ const Navbar = () => {
     : '';
   const isSuperAdmin = user?.rol === 'superadmin';
 
-  console.log('Usuario en Navbar:', user);
   return (
     <nav className={navbarClasses}>
       <div className="container mx-auto px-8 flex items-center justify-between w-full">
@@ -109,7 +94,7 @@ const Navbar = () => {
           </div>
         ) : (
           <div className="hidden lg:flex items-center space-x-2 flex-none ml-4">
-            <span className={`font-semibold text-center ${isScrolled ? 'text-gray-900' : 'text-white'}`}>
+            <span className="font-semibold text-center text-gray-900 !text-gray-900" style={{ color: "#111" }}>
               Hola, {isSuperAdmin ? `${firstName} (Admin)` : firstName}
             </span>
             <Link
@@ -194,7 +179,11 @@ const Navbar = () => {
                   </>
                 ) : (
                   <>
-                    <span className="font-semibold text-gray-700 text-center">Hola, {isSuperAdmin ? `${firstName} (Admin)` : firstName}</span>
+                    <div className='text-gray-700 hover:text-[#bd0000] font-medium text-base'>
+                      <span>
+                        Hola, {isSuperAdmin ? `${firstName} (Admin)` : firstName}
+                      </span>
+                    </div>
                     <Link 
                       to="/dashboard" 
                       className="text-center py-2 rounded-full font-medium"

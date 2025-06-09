@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { useUser } from '../context/UserContext'; // Importa tu contexto
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { setUser } = useUser(); // Usa el setter del contexto
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,10 +33,10 @@ const LoginPage: React.FC = () => {
         return;
       }
 
-      // Guarda el usuario en localStorage si lo deseas
       localStorage.setItem('user', JSON.stringify(data.user));
+      setUser(data.user); // <-- Actualiza el contexto aquí
       setIsLoading(false);
-      navigate('/dashboard'); // Cambia la ruta si tu dashboard tiene otro path
+      navigate('/dashboard');
     } catch (err: any) {
       setError(err.message || 'Error al iniciar sesión');
       setIsLoading(false);

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   open: boolean;
@@ -7,6 +8,7 @@ interface Props {
 
 const SubscribeModal: React.FC<Props> = ({ open, onClose }) => {
   const [showAnim, setShowAnim] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (open) {
@@ -29,25 +31,19 @@ const SubscribeModal: React.FC<Props> = ({ open, onClose }) => {
           &times;
         </button>
         <h2 className="text-4xl font-bold text-red-700 text-center mb-4">
-          ¡Suscríbete en nuestro blog y obten 50% de descuento en tu primera reservación!
+          ¡Suscríbete en nuestro blog y obten 10% de descuento en tu primera reservación!
         </h2>
         <p className="text-gray-700 text-center mb-8">
-          ¿Quieres ser el primero en obtener nuestros descuentos? Suscríbete y recibe un <b>descuento del 50%</b> en tu primera reservación.
+          ¿Quieres ser el primero en obtener nuestros descuentos? Suscríbete y recibe un <b>descuento del 10%</b> en tu primera reservación.
         </p>
-        <form className="flex flex-col items-center gap-4">
-          <input
-            type="email"
-            placeholder="Tu correo electrónico"
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400"
-            required
-          />
+        <div className="flex flex-col items-center gap-4">
           <button
-            type="submit"
             className="bg-red-700 hover:bg-red-800 text-white font-bold px-8 py-3 rounded-full text-lg transition-colors"
+            onClick={() => navigate("/register")}
           >
             Quiero suscribirme
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );

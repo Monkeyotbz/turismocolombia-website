@@ -17,8 +17,8 @@ import DashboardPage from './pages/DashboardPage';
 import BlogPage from './pages/BlogPage';
 import NosotrosPage from './pages/NosotrosPage';
 import AdminPropertyForm from './pages/AdminPropertyForms';
-import CuponPage from './pages/CuponPage';
 import ConfirmarCorreo from './pages/ConfirmarCorreo';
+import ReservaPage from './pages/ReservaPage';
 
 function App() {
   return (
@@ -64,8 +64,8 @@ function App() {
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/nosotros" element={<NosotrosPage />} />
             <Route path="/admin/properties/new" element={<AdminPropertyForm />} />
-            <Route path="/cupon/:code" element={<CuponPage />} />
             <Route path="/confirmar-correo" element={<ConfirmarCorreo />} />
+            <Route path="/reserva" element={<ReservaPage />} />
           </Routes>
         </main>
         <Footer />

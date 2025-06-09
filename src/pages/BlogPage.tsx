@@ -1,4 +1,5 @@
 import React from "react";
+import { useUser } from "../context/UserContext"; // Ajusta la ruta según tu estructura
 
 const articles = [
 	{
@@ -27,6 +28,7 @@ const articles = [
 const categories = ["Todos", "Destinos", "Consejos", "Gastronomía"];
 
 const BlogPage = () => {
+	const {} = useUser();
 	const [selectedCategory, setSelectedCategory] = React.useState("Todos");
 
 	const filteredArticles =

@@ -9,7 +9,7 @@ const ConfirmarCorreo: React.FC = () => {
   useEffect(() => {
     const token = searchParams.get('token');
     if (!token) {
-      setMensaje('Token inválido.');
+      setMensaje('Token inválido.'); 
       return;
     }
 

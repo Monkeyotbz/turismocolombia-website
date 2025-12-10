@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const propertiesRoutes = require('./routes/properties');
@@ -10,17 +11,17 @@ app.use(cors({
   origin: [
     'http://localhost:5174',
     'http://localhost:5173'
-    // agrega más si tienes más apps
+    // agrega mas si tienes mas apps
   ]
 }));
 
-// Carpeta para archivos estáticos (imágenes)
+// Carpeta para archivos estaticos (imagenes)
 app.use('/uploads', express.static('uploads'));
 
 // Rutas
 app.use('/properties', propertiesRoutes);
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

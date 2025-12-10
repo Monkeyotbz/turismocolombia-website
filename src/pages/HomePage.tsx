@@ -1,183 +1,179 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import HeroSection from '../components/HeroSection';
-import PropertyCard, { PropertyType } from '../components/PropertyCard';
-import { ArrowRight, ThumbsUp, BadgePercent, MapPin } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import SubscribeModal from '../components/SubscribeModal';
 import AboutCEOSection from '../components/AboutCEOSection';
-import Background from '../components/Background'; // Importa el componente Background
-import { useUser } from "../context/UserContext";
-
-const destinations = [
-  {
-    name: 'Jardin Antioquia',
-    image: '/JardinA.jpg',
-    properties: 10
-  },
-  {
-    name: 'cartagena, Bolívar', 
-    image: '/Cartagena1.3.jpg',
-    properties: 15
-  },
-  {
-    name: 'Medellín, Antioquia',
-    image: '/Medellin1.jpg',
-    properties: 5
-  },
-  {
-    name: 'Jerico Antioquia',
-    image: 'Jerico1.jpg',
-    properties: 2
-  }
-];
+import Background from '../components/Background';
+import PropertiesShowcase from '../components/PropertiesShowcase';
+import ToursShowcase from '../components/ToursShowcase';
 
 const HomePage: React.FC = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [featuredProperties, setFeaturedProperties] = useState<PropertyType[]>([]);
-  const { user } = useUser(); // OBTIENE EL USUARIO
-
-  useEffect(() => {
-    // Solo muestra el modal si NO hay usuario
-    if (!user) {
-      const timer = setTimeout(() => setShowModal(true), 1000);
-      return () => clearTimeout(timer);
-    } else {
-      setShowModal(false);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    // Petición al backend para obtener propiedades
-    fetch("http://localhost:5000/properties")
-      .then(res => res.json())
-      .then(data => setFeaturedProperties(data))
-      .catch(() => setFeaturedProperties([]));
-  }, []);
-
   return (
     <Background>
-      <div>
-        {!user && (
-          <SubscribeModal open={showModal} onClose={() => setShowModal(false)} />
-        )}
+      <div className="min-h-screen bg-gradient-to-b from-white/80 via-white to-white">
         <HeroSection />
-        <AboutCEOSection />
-        
-        {/* Featured Properties */}
-        <section className="py-16 px-4 bg-gray-50">
-          <div className="container mx-auto">
-            <div className="flex justify-between items-end mb-8">
-              <div>
-                <h2 className="text-3xl font-bold text-gray-800">Propiedades Destacadas</h2>
-                <p className="text-gray-600 mt-2">Alojamientos seleccionados para tu próxima aventura</p>
-              </div>
-              <Link 
-                to="/properties" 
-                className="flex items-center text-blue-600 font-medium hover:text-blue-700"
-              >
-                Ver todas
-                <ArrowRight className="ml-1 w-4 h-4" />
-              </Link>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProperties.length === 0 ? (
-                <div className="col-span-4 text-center text-gray-400 py-8">
-                  No hay propiedades destacadas disponibles.
-                </div>
-              ) : (
-                featuredProperties.slice(0, 4).map((property) => (
-                  <PropertyCard key={property.id} property={property} />
-                ))
-              )}
-            </div>
-          </div>
-        </section>
-        
-        {/* Why Choose Us */}
-        <section className="py-16 px-4 bg-white">
-          <div className="container mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-800">¿Por qué elegir Colombiaturismo.fit?</h2>
-              <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
+
+        <PropertiesShowcase />
+
+        <section className="py-16 px-4 bg-gradient-to-b from-[#eaf1ff] via-[#f3f6ff] to-[#eaf1ff]">
+          <div className="max-w-6xl mx-auto text-center space-y-6">
+            <div className="space-y-3">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+                ¿Por qué elegir Colombiaturismo.fit?
+              </h2>
+              <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto">
                 Ofrecemos una experiencia de reserva excepcional con ofertas exclusivas y recomendaciones personalizadas.
               </p>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-blue-50 p-6 rounded-xl text-center">
-                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <ThumbsUp className="w-8 h-8 text-blue-600" />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-blue-50 border border-blue-100 rounded-2xl p-8 flex flex-col items-center text-center gap-4 shadow-sm">
+                <div className="w-14 h-14 rounded-full bg-white border border-blue-100 flex items-center justify-center text-blue-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-7 h-7 fill-current">
+                    <path d="M9 11.3 11.3 14.5 16.2 9.7 17.7 11.1 11.3 17.5 7.5 12.3 9 11.3ZM12 2A10 10 0 1 0 22 12 10 10 0 0 0 12 2Zm0 18A8 8 0 1 1 20 12 8 8 0 0 1 12 20Z" />
+                  </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">Mejor Precio Garantizado</h3>
-                <p className="text-gray-600">
+                <h3 className="text-xl font-semibold text-gray-900">Mejor Precio Garantizado</h3>
+                <p className="text-gray-600 text-base">
                   Igualamos o superamos cualquier precio de la competencia, asegurando que siempre obtengas la mejor oferta disponible.
                 </p>
               </div>
-              
-              <div className="bg-blue-50 p-6 rounded-xl text-center">
-                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BadgePercent className="w-8 h-8 text-blue-600" />
+
+              <div className="bg-blue-50 border border-blue-100 rounded-2xl p-8 flex flex-col items-center text-center gap-4 shadow-sm">
+                <div className="w-14 h-14 rounded-full bg-white border border-blue-100 flex items-center justify-center text-blue-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-7 h-7 fill-current">
+                    <path d="M4 5H20V7H4V5ZM4 11H20V13H4V11ZM4 17H20V19H4V17Z" />
+                  </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">Ofertas Exclusivas</h3>
-                <p className="text-gray-600">
+                <h3 className="text-xl font-semibold text-gray-900">Ofertas Exclusivas</h3>
+                <p className="text-gray-600 text-base">
                   Accede a promociones y descuentos especiales que no encontrarás en otras plataformas de reservas.
                 </p>
               </div>
-              
-              <div className="bg-blue-50 p-6 rounded-xl text-center">
-                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MapPin className="w-8 h-8 text-blue-600" />
+
+              <div className="bg-blue-50 border border-blue-100 rounded-2xl p-8 flex flex-col items-center text-center gap-4 shadow-sm">
+                <div className="w-14 h-14 rounded-full bg-white border border-blue-100 flex items-center justify-center text-blue-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-7 h-7 fill-current">
+                    <path d="M12 2C8.13401 2 5 5.13401 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13401 15.866 2 12 2ZM12 11.5C10.6193 11.5 9.5 10.3807 9.5 9C9.5 7.61929 10.6193 6.5 12 6.5C13.3807 6.5 14.5 7.61929 14.5 9C14.5 10.3807 13.3807 11.5 12 11.5Z" />
+                  </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">Experiencia Local</h3>
-                <p className="text-gray-600">
+                <h3 className="text-xl font-semibold text-gray-900">Experiencia Local</h3>
+                <p className="text-gray-600 text-base">
                   Obtén consejos y recomendaciones de nuestro equipo de expertos locales en viajes.
                 </p>
               </div>
             </div>
           </div>
         </section>
-        
-        {/* Popular Destinations */}
-        <section className="py-16 px-4 bg-gray-50">
-          <div className="container mx-auto">
-            <div className="flex justify-between items-end mb-8">
-              <div>
-                <h2 className="text-3xl font-bold text-gray-800">Destinos Populares</h2>
-                <p className="text-gray-600 mt-2">Explora nuestros destinos más reservados alrededor de Colombia</p>
+
+        <ToursShowcase />
+
+        {/* Sección de valores y características */}
+        <section className="py-16 px-4">
+          <div className="max-w-7xl mx-auto">
+            {/* Grid de características con imágenes */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              <div className="relative overflow-hidden rounded-2xl shadow-lg group h-80">
+                <img 
+                  src="/mesero.jpeg" 
+                  alt="Hospitalidad y Servicio" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex items-end p-6">
+                  <div className="text-white">
+                    <h3 className="text-xl font-bold mb-1">Hospitalidad y</h3>
+                    <h3 className="text-xl font-bold">Servicio al Cliente Excepcionales</h3>
+                  </div>
+                </div>
               </div>
-              <Link 
-                to="/destinations" 
-                className="flex items-center text-blue-600 font-medium hover:text-blue-700"
-              >
-                Ver todos los destinos
-                <ArrowRight className="ml-1 w-4 h-4" />
-              </Link>
+
+              <div className="relative overflow-hidden rounded-2xl shadow-lg group h-80">
+                <img 
+                  src="/IMG-20231225-WA0149.jpg" 
+                  alt="Autenticidad y Experiencias Locales" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex items-end p-6">
+                  <div className="text-white">
+                    <h3 className="text-xl font-bold mb-1">Autenticidad y</h3>
+                    <h3 className="text-xl font-bold">Experiencias Locales</h3>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative overflow-hidden rounded-2xl shadow-lg group h-80">
+                <img 
+                  src="/IMG-20231216-WA0105.jpg" 
+                  alt="Planes turísticos flexibles" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex items-end p-6">
+                  <div className="text-white">
+                    <h3 className="text-xl font-bold mb-1">Planes turísticos</h3>
+                    <h3 className="text-xl font-bold">flexibles y personalizados</h3>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative overflow-hidden rounded-2xl shadow-lg group h-80">
+                <img 
+                  src="/IMG-20240612-WA0091.jpg" 
+                  alt="Seguridad y Bienestar" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex items-end p-6">
+                  <div className="text-white">
+                    <h3 className="text-xl font-bold mb-1">Seguridad y</h3>
+                    <h3 className="text-xl font-bold">Bienestar del Viajero</h3>
+                  </div>
+                </div>
+              </div>
             </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {destinations.map((destination, index) => (
-                <Link
-                  key={index}
-                  to={`/properties?destination=${encodeURIComponent(destination.name)}`}
-                  className="group rounded-xl overflow-hidden shadow-md relative"
-                >
-                  <div className="relative w-full h-80">
-                    <img 
-                      src={destination.image} 
-                      alt={destination.name} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
-                    <h3 className="text-white text-xl font-semibold">{destination.name}</h3>
-                    <p className="text-white text-sm opacity-90">{destination.properties} propiedades</p>
-                  </div>
-                </Link>
-              ))}
+
+            {/* Grid de imágenes grandes */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="relative overflow-hidden rounded-2xl shadow-lg group h-96">
+                <img 
+                  src="/IMG-20240220-WA0184.jpg" 
+                  alt="Destino Colombia" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+
+              <div className="relative overflow-hidden rounded-2xl shadow-lg group h-96">
+                <img 
+                  src="/Cartagena.jpg" 
+                  alt="Cartagena" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+
+              <div className="relative overflow-hidden rounded-2xl shadow-lg group h-96">
+                <img 
+                  src="/Isla Palmarito Beach.jpg" 
+                  alt="Islas del Rosario" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+
+              <div className="relative overflow-hidden rounded-2xl shadow-lg group h-96 lg:col-span-2">
+                <img 
+                  src="/IMG-20231225-WA0186.jpg" 
+                  alt="Experiencias únicas" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+
+              <div className="relative overflow-hidden rounded-2xl shadow-lg group h-96">
+                <img 
+                  src="/IMG-20240612-WA0042.jpg" 
+                  alt="Aventuras Colombia" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
             </div>
           </div>
         </section>
+
+        <AboutCEOSection />
       </div>
     </Background>
   );

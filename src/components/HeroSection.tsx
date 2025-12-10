@@ -1,34 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import SearchBar from './SearchBar';
 import { useNavigate } from 'react-router-dom';
-import Background from './Background'; // Importa el componente Background
-
-const backgrounds = [
-  "",
-];
+import Background from './Background';
 
 const HeroSection: React.FC = () => {
   const navigate = useNavigate();
-  const [bgIndex, setBgIndex] = useState(0);
-  const [prevBgIndex, setPrevBgIndex] = useState(0);
-  const [isFading, setIsFading] = useState(false);
-  const fadeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPrevBgIndex(bgIndex);
-      setIsFading(true);
-      fadeTimeout.current = setTimeout(() => {
-        setBgIndex((prev) => (prev + 1) % backgrounds.length);
-        setIsFading(false);
-      }, 1000); // 5 segundos de transición
-    }, 3000); // Cambio cada 7 segundos (5s transición + 2s visible)
-
-    return () => {
-      clearInterval(interval);
-      if (fadeTimeout.current) clearTimeout(fadeTimeout.current);
-    };
-  }, [bgIndex]);
 
   const manejarBusqueda = (searchParams: {
     destination: string;
@@ -37,74 +13,53 @@ const HeroSection: React.FC = () => {
     guests: number;
   }) => {
     const queryParams = new URLSearchParams();
-    if (searchParams.destination) {
-      queryParams.append('destination', searchParams.destination);
-    }
-    if (searchParams.checkIn) {
-      queryParams.append('checkIn', searchParams.checkIn);
-    }
-    if (searchParams.checkOut) {
-      queryParams.append('checkOut', searchParams.checkOut);
-    }
+    if (searchParams.destination) queryParams.append('destination', searchParams.destination);
+    if (searchParams.checkIn) queryParams.append('checkIn', searchParams.checkIn);
+    if (searchParams.checkOut) queryParams.append('checkOut', searchParams.checkOut);
     queryParams.append('guests', searchParams.guests.toString());
     navigate(`/properties?${queryParams.toString()}`);
   };
 
+  const heroBackgrounds = [
+    'https://images.pexels.com/photos/2884864/pexels-photo-2884864.jpeg',
+  ];
+
   return (
-    <Background>
-      <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Imagen anterior */}
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-opacity duration-[5000ms]"
-          style={{
-            backgroundImage: `url('${backgrounds[prevBgIndex]}')`,
-            opacity: isFading ? 1 : 0,
-            transitionProperty: 'opacity',
-          }}
-        ></div>
-        {/* Imagen actual */}
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-opacity duration-[5000ms]"
-          style={{
-            backgroundImage: `url('${backgrounds[bgIndex]}')`,
-            opacity: isFading ? 0 : 1,
-            transitionProperty: 'opacity',
-          }}
-        ></div>
-        {/* Degradado overlay */}
-        <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/30 to-transparent pointer-events-none"></div>
-        {/* Content */}
-        <div className="relative z-20 container mx-auto px-4 flex flex-col justify-center">
-          <div className="max-w-3xl mx-auto text-center mb-8">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
-              Descubre la magia y diversidad de Colombia
-            </h1>
-            <p className="text-xl md:text-2xl text-blue-100 mb-8">
-              destinos exóticos, cultura vibrante y naturaleza incomparable en un solo lugar.
-            </p>
-            <SearchBar 
-              onSearch={manejarBusqueda} 
-              className="max-w-4xl mx-auto mt-8"
-            />
+    <Background backgrounds={heroBackgrounds} className="relative" minHeight="70vh">
+      {/* Degradado overlay (por debajo del contenido) */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/10 to-black/80 pointer-events-none" />
+
+      {/* Contenido */}
+      <div className="relative z-20 container mx-auto px-4 flex flex-col justify-center pt-24 md:pt-28 pb-14 min-h-[70vh] md:min-h-[100vh]">
+        <div className="max-w-3xl mx-auto text-center mb-8 space-y-3">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
+            Descubre la magia y diversidad de Colombia
+          </h1>
+          <p className="text-base sm:text-lg lg:text-xxl text-white">
+            Destinos exoticos, cultura vibrante y naturaleza incomparable en un solo lugar.
+          </p>
+          <div className="mt-6">
+            <SearchBar onSearch={manejarBusqueda} className="max-w-xl sm:max-w-2xl mx-auto" />
           </div>
-          <div className="mt-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-4 text-center hover:bg-opacity-30 transition-all">
-                <p className="text-white text-3xl font-bold">1500+</p>
-                <p className="text-blue-100 mt-1">Propiedades</p>
-              </div>
-              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-4 text-center hover:bg-opacity-30 transition-all">
-                <p className="text-white text-3xl font-bold">+10</p>
-                <p className="text-blue-100 mt-1">Destinos</p>
-              </div>
-              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-4 text-center hover:bg-opacity-30 transition-all">
-                <p className="text-white text-3xl font-bold">10k+</p>
-                <p className="text-blue-100 mt-1">Clientes satisfechos</p>
-              </div>
-              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-4 text-center hover:bg-opacity-30 transition-all">
-                <p className="text-white text-3xl font-bold">24/7</p>
-                <p className="text-blue-100 mt-1">Atención al cliente</p>
-              </div>
+        </div>
+
+        <div className="mt-10 md:mt-14">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
+            <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-3 sm:p-4 text-center hover:bg-opacity-30 transition-all">
+              <p className="text-white text-xl sm:text-2xl font-bold">1500+</p>
+              <p className="text-blue-100 mt-1 text-xs sm:text-sm">Propiedades</p>
+            </div>
+            <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-3 sm:p-4 text-center hover:bg-opacity-30 transition-all">
+              <p className="text-white text-xl sm:text-2xl font-bold">+10</p>
+              <p className="text-blue-100 mt-1 text-xs sm:text-sm">Destinos</p>
+            </div>
+            <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-3 sm:p-4 text-center hover:bg-opacity-30 transition-all">
+              <p className="text-white text-xl sm:text-2xl font-bold">10k+</p>
+              <p className="text-blue-100 mt-1 text-xs sm:text-sm">Clientes satisfechos</p>
+            </div>
+            <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-3 sm:p-4 text-center hover:bg-opacity-30 transition-all">
+              <p className="text-white text-xl sm:text-2xl font-bold">24/7</p>
+              <p className="text-blue-100 mt-1 text-xs sm:text-sm">Atencion al cliente</p>
             </div>
           </div>
         </div>

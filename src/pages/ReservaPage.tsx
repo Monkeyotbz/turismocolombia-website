@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaMapMarkerAlt, FaCalendarAlt, FaUserFriends, FaDollarSign, FaExclamationCircle } from 'react-icons/fa';
 import Background from '../components/Background';
+import { formatCOP } from '../utils/format';
 
 function calcularDias(checkIn: string, checkOut: string) {
   if (!checkIn || !checkOut) return 0;
@@ -30,21 +31,50 @@ const ReservaPage: React.FC = () => {
 
   // Cálculo de días y precio total
   const dias = useMemo(() => calcularDias(checkIn, checkOut), [checkIn, checkOut]);
-  const precioNoche = reserva?.price || 0;
+  // Busca el precio correcto según el número de personas
+  const precioNoche = useMemo(() => {
+    if (Array.isArray(reserva?.prices) && reserva.prices.length > 0) {
+      const found = reserva.prices.find((p: any) => Number(p.people) === Number(guests));
+      return found ? found.price : reserva.prices[0].price;
+    }
+    return 0;
+  }, [reserva, guests]);
+
   const precioTotal = dias > 0 ? precioNoche * dias * guests : 0;
 
   if (!reserva) {
     return <div className="text-center py-16">No hay datos de reserva.</div>;
   }
 
-  const handlePagar = (e: React.FormEvent) => {
+  const handlePagar = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nombre || !correo || !telefono || !direccion) {
-      setErrores('Por favor completa todos los campos.');
-      return;
+
+    // Construye el objeto de reserva (puede tener campos vacíos)
+    const reservaData = {
+      nombre,
+      correo,
+      telefono,
+      direccion,
+      propiedad_id: reserva.id,
+      propiedad_nombre: reserva.propertyName,
+      location: reserva.location,
+      check_in: checkIn,
+      check_out: checkOut,
+      guests,
+      precio_noche: precioNoche,
+    };
+
+    try {
+      const response = await fetch('http://localhost:5000/reservas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reservaData),
+      });
+      const preFactura = await response.json();
+      navigate('/pago', { state: { reservaId: preFactura.id } });
+    } catch (err) {
+      setErrores('No se pudo guardar la reserva. Intenta de nuevo.');
     }
-    setErrores(null);
-    alert('Redirigiendo a pasarela de pago...');
   };
 
   const handleAgregarCarrito = () => {
@@ -69,9 +99,9 @@ const ReservaPage: React.FC = () => {
     <Background>
       <div className="max-w-4xl mx-auto pt-28 pb-10 px-2">
         <h1 className="text-3xl font-extrabold mb-8 text-gray-800 tracking-tight">Completa tu reserva</h1>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
           {/* Resumen de reserva */}
-          <div className="md:col-span-1 bg-gradient-to-br from-blue-100 via-white to-blue-50 rounded-2xl shadow-2xl p-6 mb-6 transition-all duration-300">
+          <div className="md:col-span-1 bg-white rounded-2xl shadow-2xl p-8 mb-6 flex flex-col">
             <h2 className="text-lg font-bold mb-4 text-blue-800">Resumen de tu reserva</h2>
             <div className="flex flex-col items-center mb-4">
               <img
@@ -82,7 +112,7 @@ const ReservaPage: React.FC = () => {
               />
               <span className="text-base font-semibold text-gray-700 text-center">{reserva.propertyName}</span>
             </div>
-            <div className="space-y-2 text-gray-700 text-sm">
+            <div className="space-y-2 text-gray-700 text-sm flex-1">
               <div className="flex items-center gap-2">
                 <FaMapMarkerAlt className="text-blue-500" />
                 <span>{reserva.location}</span>
@@ -108,7 +138,7 @@ const ReservaPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <FaDollarSign className="text-green-600" />
                 <span>
-                  <b>Precio/noche:</b> ${precioNoche}
+                  <b>Precio/noche:</b> {formatCOP(precioNoche)}
                 </span>
               </div>
               <div>
@@ -117,11 +147,11 @@ const ReservaPage: React.FC = () => {
             </div>
             <div className="border-t border-blue-200 my-4"></div>
             <div className="text-xl font-bold text-blue-700 flex items-center gap-2 transition-all duration-300">
-              Total: <span className={precioTotal > 0 ? "animate-pulse" : ""}>${precioTotal}</span>
+              Total: <span className={precioTotal > 0 ? "animate-pulse" : ""}>{formatCOP(precioTotal)}</span>
             </div>
           </div>
           {/* Formulario de usuario */}
-          <form className="md:col-span-2 bg-white rounded-2xl shadow-2xl p-8 space-y-6" onSubmit={handlePagar}>
+          <form className="md:col-span-2 bg-white rounded-2xl shadow-2xl p-8 space-y-6 flex flex-col justify-between" onSubmit={handlePagar}>
             <h2 className="text-lg font-bold mb-2 text-blue-800">Datos del huésped principal</h2>
             {errores && (
               <div className="flex items-center gap-2 text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2 mb-2">

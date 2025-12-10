@@ -1,12 +1,12 @@
 
 
-// Galería de imágenes (agrega tus propias fotos en /public)
+// Galería de imágenes
 const galeria = [
-  "/foto1.jpg",
-  "/foto2.jpg",
-  "/foto3.jpg",
-  "/foto4.jpg",
-  "/foto5.jpg",
+  "/Cartagena.jpg",
+  "/Medellin1.jpg",
+  "/JardinA.jpg",
+  "/Isla Palmarito Beach.jpg",
+  "/Jerico1.jpg",
 ];
 
 const NosotrosPage = () => (
@@ -64,17 +64,20 @@ const NosotrosPage = () => (
     </section>
 
     {/* Galería de fotos */}
-    <section className="container mx-auto px-6 py-6 rounded-2xl mb-12" style={{ backgroundColor: "rgba(30, 64, 175, 0.08)" }}>
-      <h2 className="text-2xl font-bold text-center text-red-700 mb-6">Nuestra esencia en imágenes</h2>
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {galeria.map((foto, idx) => (
-          <img
-            key={idx}
-            src={foto}
-            alt={`Galería ${idx + 1}`}
-            className="rounded-xl shadow-md object-cover h-32 w-full"
-          />
-        ))}
+    <section className="bg-gradient-to-b from-blue-50 to-white py-16">
+      <div className="container mx-auto px-6">
+        <h2 className="text-3xl font-bold text-center text-red-700 mb-12">Nuestra esencia en imágenes</h2>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+          {galeria.map((foto, idx) => (
+            <div key={idx} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+              <img
+                src={foto}
+                alt={`Galería ${idx + 1}`}
+                className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
 

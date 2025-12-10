@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaStar, FaMapMarkerAlt, FaBed, FaBath, FaRulerCombined, FaUserFriends, FaWifi, FaCar, FaSwimmingPool, FaCheckCircle, FaPlaneArrival, FaSnowflake, FaEye, FaDoorOpen, FaParking, FaHome, FaRegCalendarAlt } from 'react-icons/fa';
+import { FaStar, FaMapMarkerAlt, FaBed, FaBath, FaRulerCombined, FaUserFriends, FaWifi, FaCar, FaSwimmingPool, FaCheckCircle, FaPlaneArrival, FaSnowflake, FaEye, FaDoorOpen, FaParking, FaHome } from 'react-icons/fa';
+import { ChevronLeft } from 'lucide-react';
+import PropertyDetail from '../components/PropertyDetail';
+import { quickProperties } from '../data/showcases';
+import { formatCOP } from '../utils/format';
 
 const PHOTOS_PER_BLOCK = 5;
 
@@ -31,24 +35,232 @@ function getAmenityIcon(name: string) {
 }
 
 const PropertyDetailPage: React.FC = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [property, setProperty] = useState<any>(null);
-  const [guests, setGuests] = useState(1);
+  const [fromShowcase, setFromShowcase] = useState(false);
+  const [guests, setGuests] = useState<string>('1');
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [photoBlock, setPhotoBlock] = useState(0);
 
   useEffect(() => {
+    // Primero intenta buscar en el showcase (nuevas propiedades)
+    const showcaseProperty = quickProperties.find((p) => p.id === id);
+    if (showcaseProperty) {
+      setProperty(showcaseProperty);
+      setFromShowcase(true);
+      return;
+    }
+
+    // Si no está en showcase, intenta buscar en el backend (propiedades antiguas)
     fetch(`http://localhost:5000/properties/${id}`)
       .then(res => res.json())
-      .then(data => setProperty(data));
+      .then(data => setProperty(data))
+      .catch(() => {
+        setProperty(null);
+      });
   }, [id]);
 
-  if (!property) {
-    return <div className="text-center py-16">Cargando propiedad...</div>;
+  // Si viene del showcase (nuevas propiedades), usa el componente PropertyDetail
+  if (fromShowcase) {
+    // Generar array de imágenes basado en el ID de la propiedad
+    let images = [property.image];
+    
+    // Si es Jardín Águilas, agregar las 7 imágenes (png y jpg)
+    if (id === 'jardin-aguilas') {
+      images = [
+        '/JARDIN/Lasaguilas.png',
+        '/JARDIN/Lasaguilas1.png',
+        '/JARDIN/Lasaguilas2.png',
+        '/JARDIN/Lasaguilas3.png',
+        '/JARDIN/Lasaguilas4.jpg',
+        '/JARDIN/Lasaguilas5.jpg',
+        '/JARDIN/Lasaguilas6.jpg',
+        '/JARDIN/Lasaguilas7.jpg'
+      ];
+    }
+
+    // Si es Torres del Lago, agregar las 14 imágenes
+    if (id === 'cartagena-torresdellago') {
+      images = [
+        '/TORRESDELLAGO/TORRESDELLAGO.jpg',
+        '/TORRESDELLAGO/TORRESDELLAGO1.jpg',
+        '/TORRESDELLAGO/TORRESDELLAGO2.jpg',
+        '/TORRESDELLAGO/TORRESDELLAGO3.jpg',
+        '/TORRESDELLAGO/TORRESDELLAGO4.jpg',
+        '/TORRESDELLAGO/TORRESDELLAGO5.jpg',
+        '/TORRESDELLAGO/TORRESDELLAGO6.jpg',
+        '/TORRESDELLAGO/TORRESDELLAGO7.jpg',
+        '/TORRESDELLAGO/TORRESDELLAGO8.jpg',
+        '/TORRESDELLAGO/TORRESDELLAGO9.jpg',
+        '/TORRESDELLAGO/TORRESDELLAGO10.jpg',
+        '/TORRESDELLAGO/TORRESDELLAGO11.jpg',
+        '/TORRESDELLAGO/TORRESDELLAGO12.jpg',
+        '/TORRESDELLAGO/TORRESDELLAGO13.jpg'
+      ];
+    }
+
+    // Si es Penthouse, agregar las 5 imágenes
+    if (id === 'cartagena-penthouse') {
+      images = [
+        '/ELLAGUITO/ELLAGUITO.jpg',
+        '/ELLAGUITO/ELLAGUITO1.jpg',
+        '/ELLAGUITO/ELLAGUITO2.jpg',
+        '/ELLAGUITO/ELLAGUITO3.jpg',
+        '/ELLAGUITO/ELLAGUITO4.jpg'
+      ];
+    }
+
+    // Si es Hotel Opera Medellín, agregar las 4 imágenes
+    if (id === 'medellin-opera') {
+      images = [
+        '/OPERA/OPERA.jpg',
+        '/OPERA/OPERA2.png',
+        '/OPERA/OPERA3.jpg',
+        '/OPERA/OPERA4.jpg'
+      ];
+    }
+
+    // Si es Penthouse Medellín, agregar las 31 imágenes
+    if (id === 'medellin-penthouse') {
+      images = [
+        '/penthousemed/1.jpg',
+        '/penthousemed/2.jpg',
+        '/penthousemed/3.jpg',
+        '/penthousemed/4.jpg',
+        '/penthousemed/5.jpg',
+        '/penthousemed/6.jpg',
+        '/penthousemed/7.jpg',
+        '/penthousemed/8.jpg',
+        '/penthousemed/9.jpg',
+        '/penthousemed/10.jpg',
+        '/penthousemed/11.jpg',
+        '/penthousemed/12.jpg',
+        '/penthousemed/13.jpg',
+        '/penthousemed/14.jpg',
+        '/penthousemed/15.jpg',
+        '/penthousemed/16.jpg',
+        '/penthousemed/17.jpg',
+        '/penthousemed/18.jpg',
+        '/penthousemed/19.jpg',
+        '/penthousemed/20.jpg',
+        '/penthousemed/21.jpg',
+        '/penthousemed/22.jpg',
+        '/penthousemed/23.jpg',
+        '/penthousemed/24.jpg',
+        '/penthousemed/25.jpg',
+        '/penthousemed/26.jpg',
+        '/penthousemed/27.jpg',
+        '/penthousemed/28.jpg',
+        '/penthousemed/29.jpg',
+        '/penthousemed/30.jpg',
+        '/penthousemed/31.jpg'
+      ];
+    }
+
+    // Si es Jericó Rural, agregar las imágenes disponibles
+    if (id === 'jerico-rural') {
+      images = [
+        '/JERICO/671963015.jpg',
+        '/JERICO/Jerico3.1.jpg',
+        '/JERICO/Jerico5.jpg',
+        '/JERICO/Jerico6.jpg',
+        '/JERICO/Jerico7.jpg',
+        '/JERICO/Jerico8.jpg',
+        '/JERICO/Jerico9.jpg',
+        '/JERICO/Jerico10.jpg',
+        '/JERICO/Jerico11.jpg',
+        '/JERICO/Jerico12.jpg',
+        '/JERICO/mesero.jpg'
+      ];
+    }
+
+    // Si es Nuevo Conquistador, agregar las 11 imágenes
+    if (id === 'cartagena-nuevo-conquistador') {
+      images = [
+        '/NUEVO CONQUISTADOR/CONQUISTADOR.jpg',
+        '/NUEVO CONQUISTADOR/CONQUISTADOR1.jpg',
+        '/NUEVO CONQUISTADOR/CONQUISTADOR2.jpg',
+        '/NUEVO CONQUISTADOR/CONQUISTADOR3.jpg',
+        '/NUEVO CONQUISTADOR/CONQUISTADOR4.jpg',
+        '/NUEVO CONQUISTADOR/CONQUISTADOR5.jpg',
+        '/NUEVO CONQUISTADOR/CONQUISTADOR6.jpg',
+        '/NUEVO CONQUISTADOR/CONQUISTADOR7.jpg',
+        '/NUEVO CONQUISTADOR/CONQUISTADOR8.jpg',
+        '/NUEVO CONQUISTADOR/CONQUISTADOR9.jpg',
+        '/NUEVO CONQUISTADOR/CONQUISTADOR10.jpg'
+      ];
+    }
+
+    // Si es Tres Carabelas, agregar las 11 imágenes
+    if (id === 'cartagena-tres-carabelas') {
+      images = [
+        '/CARABELAS/CARABELAS.jpg',
+        '/CARABELAS/CARABELAS1.jpg',
+        '/CARABELAS/CARABELAS2.jpg',
+        '/CARABELAS/CARABELAS3.jpg',
+        '/CARABELAS/CARABELAS4.jpg',
+        '/CARABELAS/CARABELAS5.jpg',
+        '/CARABELAS/CARABELAS6.jpg',
+        '/CARABELAS/CARABELAS7.jpg',
+        '/CARABELAS/CARABELAS8.jpg',
+        '/CARABELAS/CARABELAS9.jpg',
+        '/CARABELAS/CARABELAS10.jpg'
+      ];
+    }
+
+    // Si es Palmettos, agregar las 11 imágenes
+    if (id === 'cartagena-palmettos') {
+      images = [
+        '/PALMETTOS/PALMETTOS.jpg',
+        '/PALMETTOS/PALMETTOS1.jpg',
+        '/PALMETTOS/PALMETTOS2.jpg',
+        '/PALMETTOS/PALMETTOS3.jpg',
+        '/PALMETTOS/PALMETTOS4.jpg',
+        '/PALMETTOS/PALMETTOS5.jpg',
+        '/PALMETTOS/PALMETTOS6.jpg',
+        '/PALMETTOS/PALMETTOS7.jpg',
+        '/PALMETTOS/PALMETTOS8.jpg',
+        '/PALMETTOS/PALMETTOS9.jpg',
+        '/PALMETTOS/PALMETTOS10.jpg'
+      ];
+    }
+
+    return (
+      <>
+        <button
+          onClick={() => navigate(-1)}
+          className="fixed top-20 left-4 z-40 bg-white hover:bg-gray-100 p-2 rounded-full shadow-lg transition flex items-center gap-2 px-4"
+        >
+          <ChevronLeft className="w-6 h-6 text-gray-900" />
+          <span className="hidden sm:inline text-gray-900 font-semibold">Atrás</span>
+        </button>
+        <PropertyDetail item={property} images={images} ctaLabel="Quiero reservar esta propiedad" />
+      </>
+    );
   }
+
+  if (!property) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Propiedad no encontrada</h1>
+          <p className="text-gray-600 mb-6">La propiedad que buscas no existe.</p>
+          <button
+            onClick={() => navigate('/properties')}
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            Volver a propiedades
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Lógica para propiedades del backend
 
   // Manejo de imágenes
   let imgs: string[] = [];
@@ -85,7 +297,7 @@ const PropertyDetailPage: React.FC = () => {
       checkIn,
       checkOut,
       guests,
-      price: Array.isArray(property.prices) && property.prices.length > 0 ? property.prices[0].price : 0,
+      prices: property.prices, // <-- ENVÍA EL ARRAY DE PRECIOS
       image: imgs[0] ? getImgUrl(imgs[0]) : '',
       location: property.location,
     };
@@ -96,10 +308,17 @@ const PropertyDetailPage: React.FC = () => {
     }
   };
 
+  const guestsNumber = Number(guests) || 1;
+  const priceForGuests =
+    Array.isArray(property.prices) && property.prices.length > 0
+      ? property.prices.find((p: any) => Number(p.people) === guestsNumber)?.price
+        ?? property.prices[0].price
+      : 0;
+
   return (
-    <div className="max-w-7xl mx-auto pt-28 pb-10 px-2 md:px-6">
-      {/* Encabezado */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
+      <div className="max-w-7xl mx-auto pt-40 pb-10 px-2 md:px-6">
+        {/* Encabezado */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
         <div>
           <h1 className="text-3xl font-bold mb-1">{property.name}</h1>
           <div className="flex items-center gap-2 text-gray-600 text-base">
@@ -265,7 +484,7 @@ const PropertyDetailPage: React.FC = () => {
               Completa tu <span className="text-blue-600">reserva</span>
             </h2>
             <div className="text-3xl font-bold mb-4 flex items-center gap-2 justify-center">
-              ${Array.isArray(property.prices) && property.prices.length > 0 ? property.prices[0].price : 0}
+              {formatCOP(priceForGuests)}
               <span className="text-lg font-normal text-gray-500">/ noche</span>
             </div>
             <form className="space-y-6">
@@ -297,7 +516,16 @@ const PropertyDetailPage: React.FC = () => {
                   min={1}
                   max={property.maxGuests || 20}
                   value={guests}
-                  onChange={e => setGuests(Number(e.target.value))}
+                  onChange={e => {
+                    // Permite vacío, elimina ceros a la izquierda
+                    let val = e.target.value.replace(/^0+/, '');
+                    if (val === '') setGuests('');
+                    else setGuests(String(Math.max(1, Number(val))));
+                  }}
+                  onBlur={() => {
+                    // Si queda vacío al salir, pon 1
+                    if (guests === '' || Number(guests) < 1) setGuests('1');
+                  }}
                 />
               </div>
               <button

@@ -189,27 +189,27 @@ const BlogPage = () => {
 								to={`/property/${property.id}`}
 								className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300"
 							>
-								<div className="relative overflow-hidden h-48">
-									<img
-										src={property.image}
-										alt={property.title}
-										className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+							<div className="relative overflow-hidden h-48">
+								<img
+									src={property.image}
+									alt={property.name}
+									className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
 									/>
 									<div className="absolute top-3 right-3 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
 										{property.location}
 									</div>
 								</div>
-								<div className="p-4">
-									<h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-1">
-										{property.title}
-									</h3>
+							<div className="p-4">
+								<h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-1">
+									{property.name}
+								</h3>
 									<p className="text-gray-600 text-sm mb-3 line-clamp-2">
 										{property.description}
 									</p>
-									<div className="flex items-center justify-between">
-										<span className="text-blue-600 font-bold text-lg">
-											{property.price}
-										</span>
+								<div className="flex items-center justify-between">
+									<span className="text-blue-600 font-bold text-lg">
+										{property.priceLabel}
+									</span>
 										<span className="text-blue-600 text-sm font-semibold group-hover:gap-2 flex items-center gap-1 transition-all">
 											Ver más
 											<svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">

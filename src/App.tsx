@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 import WhatsAppButton from './components/WhatsAppButton';
+import WelcomeModal from './components/WelcomeModal';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -65,6 +66,7 @@ function App() {
         </main>
         <Footer />
         <WhatsAppButton />
+        <WelcomeModal />
       </div>
     </Router>
   );

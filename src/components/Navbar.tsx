@@ -49,10 +49,10 @@ const Navbar = () => {
     navigate('/');
   };
 
-  const navbarClasses = `fixed w-full z-40 transition-all duration-300 top-9 ${
+  const navbarClasses = `fixed w-full z-40 transition-all duration-300 top-[36px] ${
     isScrolled || !isHome
-      ? 'bg-white shadow-md py-2'
-      : 'bg-white/95 backdrop-blur-sm shadow-sm py-4'
+      ? 'bg-white shadow-md py-1.5'
+      : 'bg-white/95 backdrop-blur-sm shadow-sm py-2.5'
   }`;
 
   const handleSearch = (searchParams: { destination: string; checkIn: string; checkOut: string; guests: number; }) => {

@@ -25,6 +25,9 @@ import AdminPropertyForm from './pages/AdminPropertyForms';
 import ConfirmarCorreo from './pages/ConfirmarCorreo';
 import ReservaPage from './pages/ReservaPage';
 import PagoPage from './pages/PagoPage';
+import BookingPage from './pages/BookingPage';
+import CheckoutPage from './pages/CheckoutPage';
+import BookingConfirmationPage from './pages/BookingConfirmationPage';
 
 function App() {
   return (
@@ -62,6 +65,9 @@ function App() {
             <Route path="/confirmar-correo" element={<ConfirmarCorreo />} />
             <Route path="/reserva" element={<ReservaPage />} />
             <Route path="/pago" element={<PagoPage />} />
+            <Route path="/booking/:id" element={<BookingPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/booking-confirmation" element={<BookingConfirmationPage />} />
           </Routes>
         </main>
         <Footer />

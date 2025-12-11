@@ -58,12 +58,18 @@ const QuickCard: React.FC<QuickCardProps> = ({ item, ctaLabel, detailRoute = 'pr
         {/* Espaciador que empuja los botones hacia abajo */}
         <div className="flex-1"></div>
         
-        <div className="mt-5 flex flex-wrap gap-3">
+        <div className="mt-5 flex flex-col gap-3">
+          <Link
+            to={`/booking/${item.id}`}
+            className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition w-full"
+          >
+            Reservar ahora
+          </Link>
           <a
             href={item.whatsapp}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition"
+            className="inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition"
           >
             <MessageCircle className="w-4 h-4" />
             {ctaLabel ?? 'Hablar por WhatsApp'}
@@ -73,7 +79,7 @@ const QuickCard: React.FC<QuickCardProps> = ({ item, ctaLabel, detailRoute = 'pr
               href={item.booking}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 border border-blue-600 text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-semibold transition"
+              className="inline-flex items-center justify-center gap-2 border border-blue-600 text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-semibold transition"
             >
               <ExternalLink className="w-4 h-4" />
               Ver en Booking

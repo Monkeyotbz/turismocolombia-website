@@ -12,8 +12,6 @@ const Navbar = () => {
 
   const { user, setUser } = useUser(); // Usa el contexto global
 
-  const isHome = location.pathname === '/';
-
   // Efecto para scroll
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -23,30 +21,9 @@ const Navbar = () => {
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
-  const handleNavToSection = (id: string) => {
-    // Si no estamos en la home, navegamos primero y luego hacemos scroll
-    if (location.pathname !== '/') {
-      navigate('/');
-      setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          window.history.replaceState(null, '', `/#${id}`);
-        }
-      }, 120);
-    } else {
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        window.history.replaceState(null, '', `/#${id}`);
-      }
-    }
-  };
-
   const handleLogout = () => {
     localStorage.removeItem('user');
     setUser(null); // Limpia el usuario del contexto
-    navigate('/');
   };
 
   const navbarClasses = `fixed w-full z-40 transition-all duration-300 top-[36px] bg-white shadow-md ${

@@ -51,8 +51,8 @@ const Navbar = () => {
 
   const navbarClasses = `fixed w-full z-40 transition-all duration-300 top-9 ${
     isScrolled || !isHome
-      ? 'bg-white/80 backdrop-blur-sm shadow-md py-2'
-      : 'bg-transparent py-4'
+      ? 'bg-white shadow-md py-2'
+      : 'bg-white/95 backdrop-blur-sm shadow-sm py-4'
   }`;
 
   const handleSearch = (searchParams: { destination: string; checkIn: string; checkOut: string; guests: number; }) => {
@@ -66,12 +66,8 @@ const Navbar = () => {
 
   const linkClasses = (path: string) =>
     `text-lg font-bold transition-colors px-4 ${
-      isHome && !isScrolled
-        ? isActive(path)
-          ? 'text-[#ff0000]'
-          : 'text-white hover:text-[#ff0000]'
-        : isActive(path)
-        ? 'text-[#ff0000]' // <-- Cambié de #bd0000 a #ff0000
+      isActive(path)
+        ? 'text-[#ff0000]'
         : 'text-gray-800 hover:text-[#ff0000]'
     }`;
 
@@ -96,13 +92,13 @@ const Navbar = () => {
       </div>
 
       <nav className={navbarClasses}>
-      <div className="container mx-auto  flex items-center justify-between w-full">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 flex items-center justify-between w-full">
         {/* Logo */}
-        <Link to="/" className="flex items-center flex-none mr-8">
+        <Link to="/" className="flex items-center flex-none mr-4 sm:mr-8">
           <img
             src="/turismo colombia fit logo-02.png"
             alt="Logo de Turismo Colombia"
-            className="h-20 w-auto max-w-[200px] object-contain"
+            className="h-14 sm:h-16 md:h-20 w-auto max-w-[150px] sm:max-w-[180px] md:max-w-[200px] object-contain"
           />
         </Link>
 

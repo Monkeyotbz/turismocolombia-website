@@ -30,7 +30,7 @@ const HeroSection: React.FC = () => {
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/10 to-black/80 pointer-events-none" />
 
       {/* Contenido */}
-      <div className="relative z-20 container mx-auto px-4 flex flex-col justify-center pt-24 md:pt-28 pb-14 min-h-[70vh] md:min-h-[100vh]">
+      <div className="relative z-20 container mx-auto px-4 flex flex-col justify-center pt-32 sm:pt-36 md:pt-28 pb-14 min-h-[70vh] md:min-h-[100vh]">
         <div className="max-w-3xl mx-auto text-center mb-8 space-y-3">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
             Descubre la magia y diversidad de Colombia

@@ -82,6 +82,36 @@ const PropertyDetailPage: React.FC = () => {
       ];
     }
 
+    // Si es Opera Jacuzzi, agregar las 5 imágenes
+    if (id === 'medellin-opera-jacuzzi') {
+      images = [
+        '/OPERA JACUZZI/OPERAJACUZZI1.png',
+        '/OPERA JACUZZI/OPERAJACUZZI2.png',
+        '/OPERA JACUZZI/OPERAJACUZZI3.png',
+        '/OPERA JACUZZI/OPERAJACUZZI4.png',
+        '/OPERA JACUZZI/OPERAJACUZZI.png'
+      ];
+    }
+
+    // Si es Opera Semi Suite, agregar las 4 imágenes
+    if (id === 'medellin-opera-semi-suite') {
+      images = [
+        '/OPERA SEMI SUITE/OPERASEMISUITE1.png',
+        '/OPERA SEMI SUITE/OPERASEMISUITE2.png',
+        '/OPERA SEMI SUITE/OPERASEMISUITE3.png',
+        '/OPERA SEMI SUITE/OPERASEMISUITE.png'
+      ];
+    }
+
+    // Si es Opera Doble Clásica, agregar las 3 imágenes
+    if (id === 'medellin-opera-doble-clasica') {
+      images = [
+        '/OPERA DOBLE CLASICA/OPERADOBLECLASICA1.png',
+        '/OPERA DOBLE CLASICA/OPERADOBLECLASICA2.png',
+        '/OPERA DOBLE CLASICA/OPERADOBLECLASICA.png'
+      ];
+    }
+
     // Si es Torres del Lago, agregar las 14 imágenes
     if (id === 'cartagena-torresdellago') {
       images = [
@@ -225,6 +255,30 @@ const PropertyDetailPage: React.FC = () => {
         '/PALMETTOS/PALMETTOS8.jpg',
         '/PALMETTOS/PALMETTOS9.jpg',
         '/PALMETTOS/PALMETTOS10.jpg'
+      ];
+    }
+
+    // Si es San Jerónimo Rural, agregar las 9 imágenes
+    if (id === 'san-jeronimo-rural') {
+      images = [
+        '/SAN JERONIMO/SANJERONIMO1.png',
+        '/SAN JERONIMO/SANJERONIMO2.png',
+        '/SAN JERONIMO/SANJERONIMO3.png',
+        '/SAN JERONIMO/SANJERONIMO4.png',
+        '/SAN JERONIMO/SANJERONIMO5.png',
+        '/SAN JERONIMO/SANJERONIMO6.png',
+        '/SAN JERONIMO/SANJERONIMO7.png',
+        '/SAN JERONIMO/SANJERONIMO8.png',
+        '/SAN JERONIMO/SANJERONIMO9.png'
+      ];
+    }
+
+    // Si es Pitalito Rancho California, agregar las 3 imágenes
+    if (id === 'pitalito-rancho-california') {
+      images = [
+        '/PITALITO/PITALITO1.png',
+        '/PITALITO/PITALITO2.png',
+        '/PITALITO/PITALITO3.png'
       ];
     }
 

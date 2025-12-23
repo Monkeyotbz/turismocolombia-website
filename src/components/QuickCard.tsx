@@ -12,6 +12,7 @@ export type ShowcaseItem = {
   whatsapp: string;
   booking?: string;
   tags?: string[];
+  category?: string; // Para categorizar tours por destino
 };
 
 type QuickCardProps = {
@@ -22,6 +23,10 @@ type QuickCardProps = {
 
 const QuickCard: React.FC<QuickCardProps> = ({ item, ctaLabel, detailRoute = 'property' }) => {
   const detailPath = `/${detailRoute}/${item.id}`;
+  
+  // Detectar si el booking link es de Airbnb
+  const isAirbnb = item.booking?.includes('airbnb');
+  const isBooking = item.booking?.includes('booking.com');
 
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 flex flex-col h-full">
@@ -74,12 +79,23 @@ const QuickCard: React.FC<QuickCardProps> = ({ item, ctaLabel, detailRoute = 'pr
             <MessageCircle className="w-4 h-4" />
             {ctaLabel ?? 'Hablar por WhatsApp'}
           </a>
-          {item.booking && (
+          {isAirbnb && (
             <a
               href={item.booking}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 border border-blue-600 text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-semibold transition"
+              className="inline-flex items-center justify-center gap-2 border-2 border-pink-500 text-pink-500 hover:bg-pink-50 px-4 py-2 rounded-lg font-semibold transition"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Ver en Airbnb
+            </a>
+          )}
+          {isBooking && (
+            <a
+              href={item.booking}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-semibold transition"
             >
               <ExternalLink className="w-4 h-4" />
               Ver en Booking

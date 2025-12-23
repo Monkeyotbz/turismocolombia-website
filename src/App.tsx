@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Components
 import Navbar from './components/Navbar';
@@ -16,8 +17,11 @@ import ToursPage from './pages/ToursPage';
 import PropertyDetailPage from './pages/PropertyDetailPage';
 import TourDetailPage from './pages/TourDetailPage';
 import LoginPage from './pages/LoginPage';
+import LoginPageNew from './pages/LoginPageNew';
 import SignupPage from './pages/SignupPage';
+import SignupPageNew from './pages/SignupPageNew';
 import DashboardPage from './pages/DashboardPage';
+import ProfilePage from './pages/ProfilePage';
 import BlogPage from './pages/BlogPage';
 import NosotrosPage from './pages/NosotrosPage';
 import DestinosPage from './pages/DestinosPage';
@@ -32,7 +36,8 @@ import BookingConfirmationPage from './pages/BookingConfirmationPage';
 function App() {
   return (
     <Router>
-      <div className="flex flex-col min-h-screen">
+      <AuthProvider>
+        <div className="flex flex-col min-h-screen">
         {/* Barra de promoción */}
 
         {/* Ajusta el margen superior del Navbar */}
@@ -47,9 +52,12 @@ function App() {
             <Route path="/tours" element={<ToursPage />} />
             <Route path="/property/:id" element={<PropertyDetailPage />} />
             <Route path="/tour/:id" element={<TourDetailPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/register" element={<SignupPage />} />
+            <Route path="/login" element={<LoginPageNew />} />
+            <Route path="/signup" element={<SignupPageNew />} />
+            <Route path="/register" element={<SignupPageNew />} />
+            <Route path="/registro" element={<SignupPageNew />} />
+            <Route path="/perfil" element={<ProfilePage />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route
               path="/dashboard"
               element={
@@ -74,6 +82,7 @@ function App() {
         <WhatsAppButton />
         <WelcomeModal />
       </div>
+      </AuthProvider>
     </Router>
   );
 }

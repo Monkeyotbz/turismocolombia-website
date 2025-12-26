@@ -69,10 +69,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('id', userId)
         .single();
 
-      if (error) throw error;
-      setProfile(data);
+      if (error) {
+        console.error('Error loading profile:', error);
+        // Si el perfil no existe, intentar crearlo
+        if (error.code === 'PGRST116') {
+          const { data: userData } = await supabase.auth.getUser();
+          if (userData.user) {
+            await supabase.from('users').insert([
+              {
+                id: userData.user.id,
+                email: userData.user.email || '',
+                full_name: userData.user.user_metadata?.full_name || 'Usuario',
+                country: 'Colombia',
+              },
+            ]);
+            // Intentar cargar de nuevo
+            const { data: newProfile } = await supabase
+              .from('users')
+              .select('*')
+              .eq('id', userId)
+              .single();
+            setProfile(newProfile);
+          }
+        }
+      } else {
+        setProfile(data);
+      }
     } catch (error) {
-      console.error('Error loading profile:', error);
+      console.error('Error en loadProfile:', error);
     } finally {
       setLoading(false);
     }
@@ -84,12 +108,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            full_name: fullName,
+          }
+        }
       });
 
-      if (authError) return { error: authError };
+      if (authError) {
+        console.error('Error en signUp Auth:', authError);
+        return { error: authError };
+      }
 
-      // 2. Crear perfil en tabla users
+      // 2. Crear perfil en tabla users (solo si el usuario fue creado)
       if (authData.user) {
+        // Esperar un momento para asegurar que el usuario está autenticado
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         const { error: profileError } = await supabase.from('users').insert([
           {
             id: authData.user.id,
@@ -99,21 +134,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           },
         ]);
 
-        if (profileError) return { error: profileError };
+        if (profileError) {
+          console.error('Error creando perfil:', profileError);
+          // No retornamos error aquí, el usuario ya fue creado en Auth
+          // El perfil se puede crear después
+        }
       }
 
       return { error: null };
     } catch (error) {
+      console.error('Error general en signUp:', error);
       return { error };
     }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) {
+        console.error('Error en signIn:', error);
+        return { error };
+      }
+
+      // Verificar/crear perfil después del login
+      if (data.user) {
+        await loadProfile(data.user.id);
+      }
+
+      return { error: null };
+    } catch (error) {
+      console.error('Error general en signIn:', error);
+      return { error };
+    }
   };
 
   const signOut = async () => {

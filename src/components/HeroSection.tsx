@@ -25,42 +25,25 @@ const HeroSection: React.FC = () => {
   ];
 
   return (
-    <Background backgrounds={heroBackgrounds} className="relative" minHeight="70vh">
-      {/* Degradado overlay (por debajo del contenido) */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/10 to-black/80 pointer-events-none" />
-
+    <Background backgrounds={heroBackgrounds} className="relative" minHeight="65vh">
+      {/* Degradado overlay mejorado */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/50 via-black/30 to-black/60 pointer-events-none" />
+      
       {/* Contenido */}
-      <div className="relative z-20 container mx-auto px-4 flex flex-col justify-center pt-36 sm:pt-40 md:pt-32 pb-14 min-h-[70vh] md:min-h-[100vh]">
-        <div className="max-w-3xl mx-auto text-center mb-8 space-y-3">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
-            Descubre la magia y diversidad de Colombia
+      <div className="relative z-20 container mx-auto px-4 flex flex-col justify-center pt-44 sm:pt-48 md:pt-40 pb-16 min-h-[65vh]">
+        {/* Título principal estilo Booking.com */}
+        <div className="max-w-5xl mx-auto mb-6 space-y-3">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight drop-shadow-lg">
+            Encuentra tu próxima estancia
           </h1>
-          <p className="text-base sm:text-lg lg:text-xxl text-white">
-            Destinos exoticos, cultura vibrante y naturaleza incomparable en un solo lugar.
+          
+          <p className="text-base sm:text-lg lg:text-xl text-white font-normal drop-shadow-md">
+            Busca ofertas en hoteles, casas y mucho más en Colombia
           </p>
+          
+          {/* Barra de búsqueda estilo Booking */}
           <div className="mt-6">
-            <SearchBar onSearch={manejarBusqueda} className="max-w-xl sm:max-w-2xl mx-auto" />
-          </div>
-        </div>
-
-        <div className="mt-10 md:mt-14">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
-            <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-3 sm:p-4 text-center hover:bg-opacity-30 transition-all">
-              <p className="text-white text-xl sm:text-2xl font-bold">1500+</p>
-              <p className="text-blue-100 mt-1 text-xs sm:text-sm">Propiedades</p>
-            </div>
-            <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-3 sm:p-4 text-center hover:bg-opacity-30 transition-all">
-              <p className="text-white text-xl sm:text-2xl font-bold">+10</p>
-              <p className="text-blue-100 mt-1 text-xs sm:text-sm">Destinos</p>
-            </div>
-            <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-3 sm:p-4 text-center hover:bg-opacity-30 transition-all">
-              <p className="text-white text-xl sm:text-2xl font-bold">10k+</p>
-              <p className="text-blue-100 mt-1 text-xs sm:text-sm">Clientes satisfechos</p>
-            </div>
-            <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-3 sm:p-4 text-center hover:bg-opacity-30 transition-all">
-              <p className="text-white text-xl sm:text-2xl font-bold">24/7</p>
-              <p className="text-blue-100 mt-1 text-xs sm:text-sm">Atencion al cliente</p>
-            </div>
+            <SearchBar onSearch={manejarBusqueda} className="max-w-5xl" />
           </div>
         </div>
       </div>

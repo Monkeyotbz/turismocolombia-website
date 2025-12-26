@@ -1,6 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Search } from 'lucide-react';
-import { quickProperties, quickTours, suggestedDestinations } from '../data/showcases';
+import React, { useState } from 'react';
+import { MapPin, Calendar, Users } from 'lucide-react';
 
 interface SearchBarProps {
   onSearch: (searchParams: {
@@ -12,75 +11,109 @@ interface SearchBarProps {
   className?: string;
 }
 
-/** Minimal SearchBar: single input with local suggestions from properties/tours/destinations. */
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch, className = '' }) => {
-  const [query, setQuery] = useState('');
-  const [showList, setShowList] = useState(false);
-
-  const items = useMemo(() => {
-    const propsMatches = quickProperties
-      .filter(p => (p.name + ' ' + p.location).toLowerCase().includes(query.toLowerCase()))
-      .map(p => ({ type: 'property' as const, id: p.id, title: p.name, subtitle: p.location }));
-
-    const toursMatches = quickTours
-      .filter(t => (t.name + ' ' + t.location).toLowerCase().includes(query.toLowerCase()))
-      .map(t => ({ type: 'tour' as const, id: t.id, title: t.name, subtitle: t.location }));
-
-    const destMatches = suggestedDestinations
-      .filter(d => d.toLowerCase().includes(query.toLowerCase()))
-      .map(d => ({ type: 'destination' as const, id: d, title: d, subtitle: '' }));
-
-    // Prioritize properties, then tours, then destinations
-    return [...propsMatches, ...toursMatches, ...destMatches].slice(0, 6);
-  }, [query]);
-
-  const handleSelect = (title: string) => {
-    setQuery(title);
-    setShowList(false);
-    onSearch({ destination: title, checkIn: '', checkOut: '', guests: 2 });
-  };
+  const [destination, setDestination] = useState('');
+  const [checkIn, setCheckIn] = useState('');
+  const [checkOut, setCheckOut] = useState('');
+  const [guests, setGuests] = useState(2);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setShowList(false);
-    onSearch({ destination: query, checkIn: '', checkOut: '', guests: 2 });
+    onSearch({ destination, checkIn, checkOut, guests });
   };
 
   return (
-    <form onSubmit={handleSubmit} className={`relative ${className}`}>
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-          <Search className="h-5 w-5 text-gray-400" />
-        </div>
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => { setQuery(e.target.value); setShowList(true); }}
-          onFocus={() => setShowList(true)}
-          onBlur={() => setTimeout(() => setShowList(false), 150)}
-          placeholder="Buscar propiedades, tours o destinos"
-          className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-        />
-      </div>
+    <form onSubmit={handleSubmit} className={className}>
+      <div className="bg-yellow-400 border-4 border-yellow-500 rounded-md p-1">
+        <div className="bg-white rounded-sm">
+          <div className="flex flex-col md:flex-row md:items-center gap-0">
+            {/* Destino */}
+            <div className="flex-1 border-b md:border-b-0 md:border-r border-gray-300 p-3">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-6 h-6 text-gray-700 flex-shrink-0" />
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
+                    placeholder="¿A dónde vas?"
+                    className="w-full text-sm font-semibold text-gray-900 placeholder-gray-600 focus:outline-none bg-transparent"
+                  />
+                </div>
+              </div>
+            </div>
 
-      {showList && query.trim().length > 0 && (
-        <ul className="absolute left-0 right-0 mt-2 bg-white shadow-lg rounded-lg overflow-hidden z-50 max-h-56 overflow-auto">
-          {items.length === 0 ? (
-            <li className="p-3 text-sm text-gray-500">No se encontraron resultados</li>
-          ) : (
-            items.map(it => (
-              <li
-                key={`${it.type}-${it.id}`}
-                onMouseDown={() => handleSelect(it.title)}
-                className="px-4 py-3 hover:bg-gray-50 cursor-pointer flex flex-col"
+            {/* Fecha de entrada */}
+            <div className="flex-1 border-b md:border-b-0 md:border-r border-gray-300 p-3">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-gray-700 flex-shrink-0" />
+                <div className="flex-1">
+                  <label className="text-xs text-gray-600 block">Fecha de entrada</label>
+                  <input
+                    type="date"
+                    value={checkIn}
+                    onChange={(e) => setCheckIn(e.target.value)}
+                    className="w-full text-sm font-semibold text-gray-900 focus:outline-none bg-transparent"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Fecha de salida */}
+            <div className="flex-1 border-b md:border-b-0 md:border-r border-gray-300 p-3">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-gray-700 flex-shrink-0" />
+                <div className="flex-1">
+                  <label className="text-xs text-gray-600 block">Fecha de salida</label>
+                  <input
+                    type="date"
+                    value={checkOut}
+                    onChange={(e) => setCheckOut(e.target.value)}
+                    className="w-full text-sm font-semibold text-gray-900 focus:outline-none bg-transparent"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Huéspedes */}
+            <div className="flex-1 border-b md:border-b-0 md:border-r border-gray-300 p-3">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-gray-700 flex-shrink-0" />
+                <div className="flex-1">
+                  <label className="text-xs text-gray-600 block">Huéspedes</label>
+                  <select
+                    value={guests}
+                    onChange={(e) => setGuests(Number(e.target.value))}
+                    className="w-full text-sm font-semibold text-gray-900 focus:outline-none bg-transparent cursor-pointer"
+                  >
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
+                      <option key={num} value={num}>{num} {num === 1 ? 'adulto' : 'adultos'}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Botón Buscar */}
+            <div className="p-2">
+              <button
+                type="submit"
+                className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 px-8 rounded transition-colors duration-200 text-base shadow-lg"
               >
-                <span className="text-sm font-medium text-gray-900">{it.title}</span>
-                {it.subtitle && <span className="text-xs text-gray-500">{it.subtitle}</span>}
-              </li>
-            ))
-          )}
-        </ul>
-      )}
+                Buscar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Checkboxes */}
+      <div className="mt-3 flex flex-wrap gap-4 text-white text-sm">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" className="w-4 h-4 rounded" />
+          <span>Busco una casa o un apartamento entero</span>
+        </label>
+      </div>
     </form>
   );
 };

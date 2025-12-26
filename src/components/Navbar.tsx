@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
+import React from 'react';
 import { Menu, X } from 'lucide-react';
-import SearchBar from './SearchBar';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../supabaseClient';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,16 +27,9 @@ const Navbar = () => {
     navigate('/');
   };
 
-  const navbarClasses = `fixed w-full z-40 transition-all duration-300 top-[36px] bg-white shadow-md ${
-    isScrolled ? 'py-1.5' : 'py-2.5'
+  const navbarClasses = `fixed w-full z-40 transition-all duration-300 top-[28px] bg-white shadow-md ${
+    isScrolled ? 'py-2' : 'py-3.5'
   }`;
-
-  const handleSearch = (searchParams: { destination: string; checkIn: string; checkOut: string; guests: number; }) => {
-    const q = searchParams.destination?.trim();
-    const params = new URLSearchParams();
-    if (q) params.append('destination', q);
-    navigate(`/properties?${params.toString()}`);
-  };
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -51,17 +45,35 @@ const Navbar = () => {
     : user?.email
     ? user.email.split('@')[0]
     : '';
-  const isSuperAdmin = false; // TODO: Agregar rol en el perfil si es necesario
+  
+  const [isAdmin, setIsAdmin] = React.useState(false);
+
+  // Verificar si es admin
+  React.useEffect(() => {
+    const checkAdmin = async () => {
+      if (!user) return;
+      
+      const { data } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+      
+      setIsAdmin(data?.role === 'admin');
+    };
+    
+    checkAdmin();
+  }, [user]);
 
   return (
     <>
       {/* Announcement ribbon */}
-      <div className="fixed top-0 left-0 right-0 bg-red-600 text-white text-sm z-50">
-        <div className="container mx-auto text-center py-2 px-4">
-          <div className="flex items-center justify-center gap-3">
-            <span aria-hidden className="text-lg">🌴</span>
+      <div className="fixed top-0 left-0 right-0 bg-red-600 text-white text-xs z-50">
+        <div className="container mx-auto text-center py-1 px-4">
+          <div className="flex items-center justify-center gap-2">
+            <span aria-hidden className="text-sm">🌴</span>
             <span className="font-medium">Vive Colombia: Tours, Hospedajes y Aventuras Inolvidables</span>
-            <span aria-hidden className="text-lg">🌴</span>
+            <span aria-hidden className="text-sm">🌴</span>
           </div>
         </div>
       </div>
@@ -87,29 +99,22 @@ const Navbar = () => {
           <Link to="/blog" className={linkClasses('/blog')}>Blog</Link>
         </div>
 
-        {/* Barra de búsqueda integrado - solo escritorio */}
-        <div className="hidden lg:flex items-center ml-6 mr-4 flex-none">
-          <div className="w-80">
-            <SearchBar onSearch={handleSearch} />
-          </div>
-        </div>
-
-        {/* Botones de sesión o usuario - solo escritorio */}
+        {/* Botones de sesión o usuario - escritorio y tableta */}
         {!user ? (
-          <div className="hidden lg:flex items-center space-x-3 flex-none">
+          <div className="hidden md:flex items-center space-x-2 lg:space-x-3 flex-none">
             <Link
               to="/login"
-              className="text-sm font-semibold border-2 border-gray-300 text-gray-800 bg-white rounded-full px-5 py-2 transition-all duration-200 hover:bg-gray-50 hover:border-gray-400"
+              className="text-xs lg:text-sm font-semibold border-2 border-blue-600 text-blue-700 bg-white rounded-full px-3 lg:px-5 py-1.5 lg:py-2 transition-all duration-200 hover:bg-blue-50 hover:border-blue-700 whitespace-nowrap"
             >
               Iniciar Sesión
             </Link>
             <Link
               to="/registro"
-              className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full px-5 py-2 transition-all duration-200 shadow-md"
+              className="text-xs lg:text-sm font-semibold bg-gradient-to-r from-yellow-500 to-red-600 hover:from-yellow-600 hover:to-red-700 text-white rounded-full px-3 lg:px-5 py-1.5 lg:py-2 transition-all duration-200 shadow-md whitespace-nowrap"
             >
               Registrarse
             </Link>
-            <button className="relative p-2 text-gray-700 hover:text-red-600 transition-colors">
+            <button className="hidden lg:block relative p-2 text-gray-700 hover:text-red-600 transition-colors">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
@@ -119,27 +124,35 @@ const Navbar = () => {
             </button>
           </div>
         ) : (
-          <div className="hidden lg:flex items-center space-x-3 flex-none">
-            <button className="relative p-2 text-gray-700 hover:text-red-600 transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="hidden md:flex items-center space-x-2 lg:space-x-3 flex-none">
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="text-xs lg:text-sm font-semibold border-2 border-purple-600 text-purple-700 bg-white rounded-full px-3 lg:px-4 py-1.5 lg:py-2 transition-all hover:bg-purple-600 hover:text-white whitespace-nowrap"
+              >
+                👑 Panel Admin
+              </Link>
+            )}
+            <button className="relative p-1.5 lg:p-2 text-gray-700 hover:text-red-600 transition-colors">
+              <svg className="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
-              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-4 h-4 lg:w-5 lg:h-5 flex items-center justify-center text-[10px] lg:text-xs">
                 0
               </span>
             </button>
             <Link
               to="/perfil"
-              className="flex items-center gap-2 text-sm font-semibold text-gray-800 hover:text-blue-600 transition-colors"
+              className="flex items-center gap-1.5 lg:gap-2 text-xs lg:text-sm font-semibold text-blue-700 hover:text-blue-900 transition-colors"
             >
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+              <div className="w-7 h-7 lg:w-8 lg:h-8 bg-gradient-to-br from-yellow-500 to-red-600 rounded-full flex items-center justify-center text-white text-xs lg:text-sm font-bold">
                 {firstName?.[0]?.toUpperCase() || '?'}
               </div>
-              <span>Hola, {firstName}</span>
+              <span className="hidden lg:inline">Hola, {firstName}</span>
             </Link>
             <button
               onClick={handleLogout}
-              className="text-sm font-semibold border-2 border-gray-300 text-gray-800 bg-white rounded-full px-4 py-2 transition-all hover:bg-red-600 hover:text-white hover:border-red-600"
+              className="text-xs lg:text-sm font-semibold border-2 border-red-600 text-red-700 bg-white rounded-full px-3 lg:px-4 py-1.5 lg:py-2 transition-all hover:bg-red-600 hover:text-white whitespace-nowrap"
             >
               Cerrar sesión
             </button>
@@ -148,7 +161,7 @@ const Navbar = () => {
 
         {/* Botón hamburguesa - solo móvil */}
         <button
-          className="flex lg:hidden text-gray-800 text-3xl ml-auto"
+          className="flex md:hidden text-gray-800 text-3xl ml-auto"
           onClick={toggleMenu}
           aria-label="Abrir menú"
         >
@@ -158,7 +171,7 @@ const Navbar = () => {
 
       {/* Menú móvil */}
       {isOpen && (
-        <div className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50" onClick={toggleMenu}>
+        <div className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50" onClick={toggleMenu}>
           <div
             className="absolute top-0 right-0 w-72 h-full bg-white shadow-2xl"
             onClick={(e) => e.stopPropagation()}
@@ -257,7 +270,7 @@ const Navbar = () => {
                 <>
                   <Link
                     to="/login"
-                    className="flex items-center justify-center gap-2 w-full bg-white border-2 border-gray-300 text-gray-800 py-3 rounded-lg font-semibold transition-colors hover:bg-gray-50"
+                    className="flex items-center justify-center gap-2 w-full bg-white border-2 border-blue-600 text-blue-700 py-3 rounded-lg font-semibold transition-colors hover:bg-blue-50"
                     onClick={toggleMenu}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -267,7 +280,7 @@ const Navbar = () => {
                   </Link>
                   <Link
                     to="/registro"
-                    className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold transition-colors shadow-md hover:from-blue-700 hover:to-purple-700"
+                    className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-yellow-500 to-red-600 text-white py-3 rounded-lg font-semibold transition-colors shadow-md hover:from-yellow-600 hover:to-red-700"
                     onClick={toggleMenu}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -278,9 +291,21 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 rounded-lg font-semibold transition-colors hover:from-purple-700 hover:to-purple-800 mb-2"
+                      onClick={toggleMenu}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                      👑 Panel Admin
+                    </Link>
+                  )}
                   <Link
                     to="/perfil"
-                    className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white py-3 rounded-lg font-semibold transition-colors hover:bg-blue-700"
+                    className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-yellow-500 to-red-600 text-white py-3 rounded-lg font-semibold transition-colors hover:from-yellow-600 hover:to-red-700"
                     onClick={toggleMenu}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -293,7 +318,7 @@ const Navbar = () => {
                       handleLogout();
                       toggleMenu();
                     }}
-                    className="flex items-center justify-center gap-2 w-full bg-red-600 text-white py-3 rounded-lg font-semibold transition-colors hover:bg-red-700"
+                    className="flex items-center justify-center gap-2 w-full bg-white border-2 border-red-600 text-red-700 py-3 rounded-lg font-semibold transition-colors hover:bg-red-600 hover:text-white"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

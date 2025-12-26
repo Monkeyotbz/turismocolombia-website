@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 export type ShowcaseItem = {
   id: string;
+  dbId?: string; // ID de la base de datos
   name: string;
   location: string;
   description: string;
@@ -13,6 +14,10 @@ export type ShowcaseItem = {
   booking?: string;
   tags?: string[];
   category?: string; // Para categorizar tours por destino
+  propertyType?: string; // hotel, apartamento, casa, cabaña, hostal
+  city?: string; // Ciudad de la propiedad
+  featured?: boolean; // Si es destacada
+  difficulty?: string; // Dificultad del tour (Fácil, Moderado, Difícil)
 };
 
 type QuickCardProps = {

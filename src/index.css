@@ -2,3 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
+/* React Big Calendar Styles */
+.rbc-calendar {
+  font-family: inherit;
+}
+
+.rbc-header {
+  padding: 12px 6px;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+.rbc-today {
+  background-color: #fef3c7;
+}
+
+.rbc-off-range-bg {
+  background-color: #f9fafb;
+}
+
+.rbc-event {
+  padding: 2px 5px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.rbc-toolbar button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.rbc-toolbar button:hover {
+  background-color: #e5e7eb;
+}
+
+.rbc-toolbar button.rbc-active {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.rbc-toolbar button.rbc-active:hover {
+  background-color: #2563eb;
+}

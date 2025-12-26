@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { Plus, Edit, Trash2, Eye, Search } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Search, Calendar } from 'lucide-react';
+import PropertyFormModal from '../components/admin/PropertyFormModal';
+import PropertyCalendar from '../components/admin/PropertyCalendar';
 
 interface Property {
   id: string;
@@ -15,13 +17,24 @@ interface Property {
   property_type: string;
   featured: boolean;
   active: boolean;
+  amenities: string[];
   created_at: string;
+  property_images?: Array<{
+    id: string;
+    image_url: string;
+    display_order: number;
+  }>;  
 }
 
 const AdminProperties = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [calendarProperty, setCalendarProperty] = useState<Property | null>(null);
 
   useEffect(() => {
     fetchProperties();
@@ -31,7 +44,14 @@ const AdminProperties = () => {
     try {
       const { data, error } = await supabase
         .from('properties')
-        .select('*')
+        .select(`
+          *,
+          property_images(
+            id,
+            image_url,
+            display_order
+          )
+        `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -74,6 +94,37 @@ const AdminProperties = () => {
     }
   };
 
+  const handleOpenCreate = () => {
+    setSelectedProperty(null);
+    setModalMode('create');
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (property: Property) => {
+    setSelectedProperty(property);
+    setModalMode('edit');
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProperty(null);
+  };
+
+  const handleSave = () => {
+    fetchProperties();
+  };
+
+  const handleOpenCalendar = (property: Property) => {
+    setCalendarProperty(property);
+    setIsCalendarOpen(true);
+  };
+
+  const handleCloseCalendar = () => {
+    setIsCalendarOpen(false);
+    setCalendarProperty(null);
+  };
+
   const filteredProperties = properties.filter(p =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.city.toLowerCase().includes(searchTerm.toLowerCase())
@@ -95,7 +146,10 @@ const AdminProperties = () => {
           <h1 className="text-3xl font-bold text-gray-800">Gestión de Propiedades</h1>
           <p className="text-gray-600 mt-1">Administra todas las propiedades del sistema</p>
         </div>
-        <button className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2">
+        <button 
+          onClick={handleOpenCreate}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2"
+        >
           <Plus className="w-5 h-5" />
           Nueva Propiedad
         </button>
@@ -148,6 +202,9 @@ const AdminProperties = () => {
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Imagen
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Propiedad
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -171,8 +228,28 @@ const AdminProperties = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredProperties.map((property) => (
+              {filteredProperties.map((property) => {
+                const firstImage = property.property_images && property.property_images.length > 0
+                  ? property.property_images.sort((a, b) => a.display_order - b.display_order)[0]
+                  : null;
+                
+                return (
                 <tr key={property.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4">
+                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                      {firstImage ? (
+                        <img
+                          src={firstImage.image_url}
+                          alt={property.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="text-gray-400 text-xs text-center px-1">
+                          Sin imagen
+                        </div>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-6 py-4">
                     <div>
                       <p className="font-semibold text-gray-800">{property.name}</p>
@@ -210,12 +287,21 @@ const AdminProperties = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <button
+                        onClick={() => handleOpenCalendar(property)}
+                        className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                        title="Ver calendario"
+                      >
+                        <Calendar className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleOpenEdit(property)}
                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                         title="Ver detalles"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
                       <button
+                        onClick={() => handleOpenEdit(property)}
                         className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                         title="Editar"
                       >
@@ -231,7 +317,8 @@ const AdminProperties = () => {
                     </div>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -242,6 +329,24 @@ const AdminProperties = () => {
           </div>
         )}
       </div>
+
+      {/* Modal de Formulario */}
+      <PropertyFormModal
+        property={modalMode === 'edit' ? selectedProperty : undefined}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSave={handleSave}
+      />
+
+      {/* Calendario de Propiedad */}
+      {calendarProperty && (
+        <PropertyCalendar
+          propertyId={calendarProperty.id}
+          propertyName={calendarProperty.name}
+          isOpen={isCalendarOpen}
+          onClose={handleCloseCalendar}
+        />
+      )}
     </div>
   );
 };

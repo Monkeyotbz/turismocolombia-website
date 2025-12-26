@@ -16,10 +16,10 @@ import AdminLayout from './layouts/AdminLayout';
 
 // Pages
 import HomePage from './pages/HomePage';
-import PropertiesPage from './pages/PropertiesPage';
-import ToursPage from './pages/ToursPage';
-import PropertyDetailPage from './pages/PropertyDetailPage';
-import TourDetailPage from './pages/TourDetailPage';
+import PropertiesPageDynamic from './pages/PropertiesPageDynamic';
+import ToursPageDynamic from './pages/ToursPageDynamic';
+import PropertyDetailPageDynamic from './pages/PropertyDetailPageDynamic';
+import TourDetailPageDynamic from './pages/TourDetailPageDynamic';
 import LoginPageNew from './pages/LoginPageNew';
 import SignupPageNew from './pages/SignupPageNew';
 import DashboardPage from './pages/DashboardPage';
@@ -64,10 +64,10 @@ function App() {
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/properties" element={<PropertiesPage />} />
-            <Route path="/tours" element={<ToursPage />} />
-            <Route path="/property/:id" element={<PropertyDetailPage />} />
-            <Route path="/tour/:id" element={<TourDetailPage />} />
+            <Route path="/properties" element={<PropertiesPageDynamic />} />
+              <Route path="/tours" element={<ToursPageDynamic />} />
+              <Route path="/property/:id" element={<PropertyDetailPageDynamic />} />
+              <Route path="/tour/:id" element={<TourDetailPageDynamic />} />
             <Route path="/login" element={<LoginPageNew />} />
             <Route path="/signup" element={<SignupPageNew />} />
             <Route path="/register" element={<SignupPageNew />} />

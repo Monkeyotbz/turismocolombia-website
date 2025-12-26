@@ -2,8 +2,8 @@ import React from 'react';
 import HeroSection from '../components/HeroSection';
 import AboutCEOSection from '../components/AboutCEOSection';
 import Background from '../components/Background';
-import PropertiesShowcase from '../components/PropertiesShowcase';
-import ToursShowcase from '../components/ToursShowcase';
+import PropertiesShowcaseDynamic from '../components/PropertiesShowcaseDynamic';
+import ToursShowcaseDynamic from '../components/ToursShowcaseDynamic';
 
 const HomePage: React.FC = () => {
   return (
@@ -11,7 +11,7 @@ const HomePage: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-b from-white/80 via-white to-white">
         <HeroSection />
 
-        <PropertiesShowcase />
+        <PropertiesShowcaseDynamic />
 
         <section className="py-16 px-4 bg-gradient-to-b from-[#eaf1ff] via-[#f3f6ff] to-[#eaf1ff]">
           <div className="max-w-6xl mx-auto text-center space-y-6">
@@ -64,7 +64,7 @@ const HomePage: React.FC = () => {
           </div>
         </section>
 
-        <ToursShowcase />
+        <ToursShowcaseDynamic />
 
         {/* Sección de valores y características */}
         <section className="py-16 px-4">

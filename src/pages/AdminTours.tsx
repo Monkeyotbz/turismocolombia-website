@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { Plus, Edit, Trash2, Eye, Search } from 'lucide-react';
+import { Plus, Edit, Trash2, Search } from 'lucide-react';
+import TourFormModal from '../components/TourFormModal';
 
 interface Tour {
   id: string;
@@ -12,6 +13,9 @@ interface Tour {
   duration: string;
   difficulty: string;
   max_people: number;
+  rating: number;
+  reviews_count: number;
+  includes: string[];
   featured: boolean;
   active: boolean;
   created_at: string;
@@ -21,6 +25,8 @@ const AdminTours = () => {
   const [tours, setTours] = useState<Tour[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
 
   useEffect(() => {
     fetchTours();
@@ -59,6 +65,24 @@ const AdminTours = () => {
     }
   };
 
+  const handleEdit = (tour: Tour) => {
+    setSelectedTour(tour);
+    setShowModal(true);
+  };
+
+  const handleCreate = () => {
+    setSelectedTour(null);
+    setShowModal(true);
+  };
+
+  const handleModalClose = (refreshData?: boolean) => {
+    setShowModal(false);
+    setSelectedTour(null);
+    if (refreshData) {
+      fetchTours();
+    }
+  };
+
   const toggleActive = async (id: string, currentStatus: boolean) => {
     try {
       const { error } = await supabase
@@ -94,7 +118,10 @@ const AdminTours = () => {
           <h1 className="text-3xl font-bold text-gray-800">Gestión de Tours</h1>
           <p className="text-gray-600 mt-1">Administra todos los tours del sistema</p>
         </div>
-        <button className="bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition-colors flex items-center gap-2">
+        <button
+          onClick={handleCreate}
+          className="bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition-colors flex items-center gap-2"
+        >
           <Plus className="w-5 h-5" />
           Nuevo Tour
         </button>
@@ -215,12 +242,7 @@ const AdminTours = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <button
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="Ver detalles"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <button
+                        onClick={() => handleEdit(tour)}
                         className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                         title="Editar"
                       >
@@ -247,6 +269,14 @@ const AdminTours = () => {
           </div>
         )}
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <TourFormModal
+          tour={selectedTour}
+          onClose={handleModalClose}
+        />
+      )}
     </div>
   );
 };

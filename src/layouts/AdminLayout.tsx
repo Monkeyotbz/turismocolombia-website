@@ -1,11 +1,13 @@
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Home, Building2, Map, Users, Settings, LogOut, LayoutDashboard } from 'lucide-react';
+import { Home, Building2, Map, Users, Settings, LogOut, LayoutDashboard, Menu, X } from 'lucide-react';
 
 const AdminLayout = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = async () => {
     await signOut();
@@ -22,16 +24,34 @@ const AdminLayout = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  const closeSidebar = () => setSidebarOpen(false);
+
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={closeSidebar}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50">
+      <div className={`fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      }`}>
         {/* Logo */}
-        <div className="h-16 flex items-center px-6 border-b border-gray-200">
-          <Link to="/admin" className="flex items-center gap-2">
+        <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200">
+          <Link to="/admin" className="flex items-center gap-2" onClick={closeSidebar}>
             <img src="/turismo colombia fit logo-02.png" alt="Logo" className="h-10 w-auto" />
             <span className="font-bold text-gray-800">Admin</span>
           </Link>
+          <button
+            onClick={closeSidebar}
+            className="lg:hidden p-2 rounded-md hover:bg-gray-100"
+          >
+            <X className="w-5 h-5 text-gray-600" />
+          </button>
         </div>
 
         {/* Navigation */}
@@ -43,6 +63,7 @@ const AdminLayout = () => {
               <Link
                 key={item.name}
                 to={item.href}
+                onClick={closeSidebar}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-1 transition-colors ${
                   active
                     ? 'bg-blue-50 text-blue-700 font-semibold'
@@ -80,21 +101,29 @@ const AdminLayout = () => {
       </div>
 
       {/* Main content */}
-      <div className="ml-64">
+      <div className="lg:ml-64">
         {/* Top bar */}
-        <div className="h-16 bg-white shadow-sm flex items-center justify-between px-6">
-          <h1 className="text-xl font-bold text-gray-800">Panel de Administración</h1>
+        <div className="h-16 bg-white shadow-sm flex items-center justify-between px-4 lg:px-6">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 rounded-md hover:bg-gray-100"
+            >
+              <Menu className="w-6 h-6 text-gray-600" />
+            </button>
+            <h1 className="text-lg lg:text-xl font-bold text-gray-800">Panel de Administración</h1>
+          </div>
           <Link
             to="/"
             className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
           >
             <Home className="w-5 h-5" />
-            <span className="text-sm font-medium">Ver sitio</span>
+            <span className="hidden sm:inline text-sm font-medium">Ver sitio</span>
           </Link>
         </div>
 
         {/* Page content */}
-        <div className="p-6">
+        <div className="p-4 lg:p-6">
           <Outlet />
         </div>
       </div>

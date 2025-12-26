@@ -139,64 +139,152 @@ const AdminProperties = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 px-3 sm:px-0">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800">Gestión de Propiedades</h1>
-          <p className="text-gray-600 mt-1">Administra todas las propiedades del sistema</p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div className="flex-1">
+          <h1 className="text-xl lg:text-2xl font-bold text-gray-800">Gestión de Propiedades</h1>
+          <p className="text-xs lg:text-sm text-gray-600 mt-1">Administra todas las propiedades del sistema</p>
         </div>
         <button 
           onClick={handleOpenCreate}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2"
+          className="w-full sm:w-auto bg-blue-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
           Nueva Propiedad
         </button>
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white p-4 rounded-lg shadow-md">
+      <div className="bg-white p-3 sm:p-4 rounded-lg shadow-md">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
           <input
             type="text"
-            placeholder="Buscar por nombre o ciudad..."
+            placeholder="Buscar..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <p className="text-gray-500 text-sm">Total</p>
-          <p className="text-2xl font-bold text-gray-800">{properties.length}</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+        <div className="bg-white p-3 sm:p-4 rounded-lg shadow-md">
+          <p className="text-gray-500 text-xs sm:text-sm">Total</p>
+          <p className="text-xl sm:text-2xl font-bold text-gray-800">{properties.length}</p>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <p className="text-gray-500 text-sm">Activas</p>
-          <p className="text-2xl font-bold text-green-600">
+        <div className="bg-white p-3 sm:p-4 rounded-lg shadow-md">
+          <p className="text-gray-500 text-xs sm:text-sm">Activas</p>
+          <p className="text-xl sm:text-2xl font-bold text-green-600">
             {properties.filter(p => p.active).length}
           </p>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <p className="text-gray-500 text-sm">Destacadas</p>
-          <p className="text-2xl font-bold text-yellow-600">
+        <div className="bg-white p-3 sm:p-4 rounded-lg shadow-md">
+          <p className="text-gray-500 text-xs sm:text-sm">Destacadas</p>
+          <p className="text-xl sm:text-2xl font-bold text-yellow-600">
             {properties.filter(p => p.featured).length}
           </p>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <p className="text-gray-500 text-sm">Inactivas</p>
-          <p className="text-2xl font-bold text-red-600">
+        <div className="bg-white p-3 sm:p-4 rounded-lg shadow-md">
+          <p className="text-gray-500 text-xs sm:text-sm">Inactivas</p>
+          <p className="text-xl sm:text-2xl font-bold text-red-600">
             {properties.filter(p => !p.active).length}
           </p>
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      {/* Vista de tarjetas para móvil y tabla para desktop */}
+      {/* Vista móvil */}
+      <div className="lg:hidden space-y-3">
+        {filteredProperties.map((property) => {
+          const firstImage = property.property_images && property.property_images.length > 0
+            ? property.property_images.sort((a, b) => a.display_order - b.display_order)[0]
+            : null;
+          
+          return (
+            <div key={property.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="flex gap-3 p-3">
+                <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                  {firstImage ? (
+                    <img
+                      src={firstImage.image_url}
+                      alt={property.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs text-center px-1">
+                      Sin imagen
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2 mb-1.5">
+                    <h3 className="font-semibold text-gray-800 text-sm leading-tight line-clamp-2 flex-1">
+                      {property.name}
+                    </h3>
+                    <button
+                      onClick={() => toggleActive(property.id, property.active)}
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${
+                        property.active
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-gray-100 text-gray-600'
+                      }`}
+                    >
+                      {property.active ? '✓' : '○'}
+                    </button>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <p className="text-xs text-gray-500">{property.city}</p>
+                    <span className="text-gray-300">•</span>
+                    <p className="text-xs text-gray-500 capitalize">{property.property_type}</p>
+                  </div>
+                  
+                  {property.featured && (
+                    <span className="inline-flex items-center text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-medium mb-1.5">
+                      ⭐ Destacada
+                    </span>
+                  )}
+                  
+                  <p className="text-base font-bold text-blue-600 mb-2">
+                    ${property.price_per_night.toLocaleString()}
+                    <span className="text-xs font-normal text-gray-500">/noche</span>
+                  </p>
+                  
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => handleOpenCalendar(property)}
+                      className="flex-1 px-2 py-1.5 text-purple-600 bg-purple-50 rounded-lg text-xs font-medium hover:bg-purple-100 active:bg-purple-200 transition-colors flex items-center justify-center gap-1"
+                    >
+                      <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span className="hidden xs:inline">Cal.</span>
+                    </button>
+                    <button
+                      onClick={() => handleOpenEdit(property)}
+                      className="flex-1 px-2 py-1.5 text-green-600 bg-green-50 rounded-lg text-xs font-medium hover:bg-green-100 active:bg-green-200 transition-colors flex items-center justify-center gap-1"
+                    >
+                      <Edit className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span className="hidden xs:inline">Editar</span>
+                    </button>
+                    <button
+                      onClick={() => handleDelete(property.id)}
+                      className="p-1.5 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 active:bg-red-200 transition-colors"
+                      title="Eliminar"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Vista desktop (tabla) */}
+      <div className="hidden lg:block bg-white rounded-lg shadow-md overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
@@ -322,13 +410,14 @@ const AdminProperties = () => {
             </tbody>
           </table>
         </div>
-
-        {filteredProperties.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No se encontraron propiedades</p>
-          </div>
-        )}
       </div>
+
+      {/* Sin resultados */}
+      {filteredProperties.length === 0 && (
+        <div className="bg-white rounded-lg shadow-md p-8 sm:p-12 text-center">
+          <p className="text-gray-500 text-sm sm:text-base">No se encontraron propiedades</p>
+        </div>
+      )}
 
       {/* Modal de Formulario */}
       <PropertyFormModal

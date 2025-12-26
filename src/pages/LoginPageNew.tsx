@@ -20,7 +20,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { data, error } = await signIn(email, password);
+      const { error } = await signIn(email, password);
 
       if (error) {
         console.error('Error de login:', error);
@@ -38,14 +38,16 @@ export default function LoginPage() {
         setLoading(false);
       } else {
         // Verificar si el usuario es admin
-        if (data?.user) {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
           const { data: userData } = await supabase
             .from('users')
             .select('role')
-            .eq('id', data.user.id)
+            .eq('id', user.id)
             .single();
           
-          console.log('✅ Usuario logueado:', { email: data.user.email, role: userData?.role });
+          console.log('✅ Usuario logueado:', { email: user.email, role: userData?.role });
           
           // Redirigir según el rol
           if (userData?.role === 'admin') {

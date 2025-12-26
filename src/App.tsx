@@ -30,6 +30,9 @@ import DestinosPage from './pages/DestinosPage';
 import AdminPropertyForm from './pages/AdminPropertyForms';
 import ConfirmarCorreo from './pages/ConfirmarCorreo';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminProperties from './pages/AdminProperties';
+import AdminTours from './pages/AdminTours';
+import AdminUsers from './pages/AdminUsers';
 import ReservaPage from './pages/ReservaPage';
 import PagoPage from './pages/PagoPage';
 import BookingPage from './pages/BookingPage';
@@ -94,10 +97,10 @@ function App() {
             <Route element={<AdminRoute />}>
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
-                <Route path="properties" element={<div>Propiedades (próximamente)</div>} />
-                <Route path="tours" element={<div>Tours (próximamente)</div>} />
-                <Route path="users" element={<div>Usuarios (próximamente)</div>} />
-                <Route path="settings" element={<div>Configuración (próximamente)</div>} />
+                <Route path="properties" element={<AdminProperties />} />
+                <Route path="tours" element={<AdminTours />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="settings" element={<div className="p-6"><h1 className="text-2xl font-bold">Configuración</h1><p className="text-gray-600 mt-2">Próximamente...</p></div>} />
               </Route>
             </Route>
           </Routes>

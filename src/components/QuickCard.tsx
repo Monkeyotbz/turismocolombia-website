@@ -70,10 +70,10 @@ const QuickCard: React.FC<QuickCardProps> = ({ item, ctaLabel, detailRoute = 'pr
         
         <div className="mt-5 flex flex-col gap-3">
           <Link
-            to={`/booking/${item.id}`}
+            to={detailPath}
             className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition w-full"
           >
-            Reservar ahora
+            Ver detalles y reservar
           </Link>
           <a
             href={item.whatsapp}

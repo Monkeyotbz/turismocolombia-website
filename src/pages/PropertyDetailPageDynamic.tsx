@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaMapMarkerAlt, FaBed, FaBath, FaUserFriends, FaWifi, FaSwimmingPool, FaCheckCircle, FaPlaneArrival, FaSnowflake, FaEye, FaParking } from 'react-icons/fa';
-import { ChevronLeft, MessageCircle } from 'lucide-react';
+import { ChevronLeft, MessageCircle, ShoppingCart } from 'lucide-react';
 import { supabase } from '../supabaseClient';
+import AddToCartModal from '../components/AddToCartModal';
 
 interface Property {
   id: string;
@@ -50,6 +51,7 @@ const PropertyDetailPageDynamic: React.FC = () => {
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [showCartModal, setShowCartModal] = useState(false);
 
   useEffect(() => {
     fetchProperty();
@@ -59,7 +61,28 @@ const PropertyDetailPageDynamic: React.FC = () => {
     if (!id) return;
 
     try {
-      // Buscar por slug (nombre convertido a URL)
+      // Primero intentar buscar por ID directo (UUID)
+      const { data: directProperty, error: directError } = await supabase
+        .from('properties')
+        .select(`
+          *,
+          property_images(
+            id,
+            image_url,
+            display_order
+          )
+        `)
+        .eq('id', id)
+        .eq('active', true)
+        .single();
+
+      if (directProperty && !directError) {
+        setProperty(directProperty);
+        setLoading(false);
+        return;
+      }
+
+      // Si no se encuentra por ID, buscar por slug
       const { data: properties, error } = await supabase
         .from('properties')
         .select(`
@@ -82,12 +105,14 @@ const PropertyDetailPageDynamic: React.FC = () => {
           .replace(/[\u0300-\u036f]/g, '')
           .replace(/\s+/g, '-')
           .replace(/[^\w\-]+/g, '');
+        console.log('Comparing slug:', slug, 'with id:', id);
         return slug === id;
       });
 
       if (property) {
         setProperty(property);
       } else {
+        console.error('Property not found. ID/Slug:', id);
         setProperty(null);
       }
     } catch (error) {
@@ -275,6 +300,14 @@ const PropertyDetailPageDynamic: React.FC = () => {
               </div>
 
               <div className="space-y-3">
+                <button
+                  onClick={() => setShowCartModal(true)}
+                  className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition shadow-md"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  Agregar al Carrito
+                </button>
+
                 <a
                   href={whatsappLink}
                   target="_blank"
@@ -282,15 +315,8 @@ const PropertyDetailPageDynamic: React.FC = () => {
                   className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition shadow-md"
                 >
                   <MessageCircle className="w-5 h-5" />
-                  Reservar por WhatsApp
+                  Consultar por WhatsApp
                 </a>
-
-                <button
-                  onClick={() => navigate(`/booking/${id}`)}
-                  className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition shadow-md"
-                >
-                  Reservar ahora
-                </button>
               </div>
 
               <div className="mt-6 pt-6 border-t border-gray-200">
@@ -307,6 +333,19 @@ const PropertyDetailPageDynamic: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal de Agregar al Carrito */}
+      <AddToCartModal
+        isOpen={showCartModal}
+        onClose={() => setShowCartModal(false)}
+        type="property"
+        itemId={property.id}
+        itemName={property.name}
+        city={property.city}
+        basePrice={property.price_per_night}
+        maxGuests={property.guests}
+        imageUrl={mainImage}
+      />
     </div>
   );
 };

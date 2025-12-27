@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ShoppingCart } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/CartContext';
 import { supabase } from '../supabaseClient';
 
 const Navbar = () => {
@@ -12,6 +13,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const { user, profile, signOut } = useAuth();
+  const { itemCount } = useCart();
 
   // Efecto para scroll
   useEffect(() => {
@@ -114,14 +116,14 @@ const Navbar = () => {
             >
               Registrarse
             </Link>
-            <button className="hidden lg:block relative p-2 text-gray-700 hover:text-red-600 transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
-            </button>
+            <Link to="/cart" className="hidden lg:block relative p-2 text-gray-700 hover:text-red-600 transition-colors">
+              <ShoppingCart className="w-6 h-6" />
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
           </div>
         ) : (
           <div className="hidden md:flex items-center space-x-2 lg:space-x-3 flex-none">
@@ -133,14 +135,14 @@ const Navbar = () => {
                 👑 Panel Admin
               </Link>
             )}
-            <button className="relative p-1.5 lg:p-2 text-gray-700 hover:text-red-600 transition-colors">
-              <svg className="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-4 h-4 lg:w-5 lg:h-5 flex items-center justify-center text-[10px] lg:text-xs">
-                0
-              </span>
-            </button>
+            <Link to="/cart" className="relative p-1.5 lg:p-2 text-gray-700 hover:text-red-600 transition-colors">
+              <ShoppingCart className="w-5 h-5 lg:w-6 lg:h-6" />
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-4 h-4 lg:w-5 lg:h-5 flex items-center justify-center text-[10px] lg:text-xs">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
             <Link
               to="/perfil"
               className="flex items-center gap-1.5 lg:gap-2 text-xs lg:text-sm font-semibold text-blue-700 hover:text-blue-900 transition-colors"

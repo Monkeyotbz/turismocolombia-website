@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import AddToCartModal from '../components/AddToCartModal';
 import { 
   FaMapMarkerAlt, 
   FaClock, 
@@ -12,6 +13,7 @@ import {
   FaTimes,
   FaCheckCircle
 } from 'react-icons/fa';
+import { ShoppingCart } from 'lucide-react';
 
 interface TourDetail {
   id: number;
@@ -35,6 +37,7 @@ const TourDetailPageDynamic: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showFullScreen, setShowFullScreen] = useState(false);
+  const [showCartModal, setShowCartModal] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -287,6 +290,14 @@ const TourDetailPageDynamic: React.FC = () => {
               </div>
 
               <div className="space-y-3">
+                <button 
+                  onClick={() => setShowCartModal(true)}
+                  className="w-full flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg font-semibold transition-colors shadow-lg"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  Agregar al Carrito
+                </button>
+
                 <a
                   href={whatsappLink}
                   target="_blank"
@@ -296,10 +307,6 @@ const TourDetailPageDynamic: React.FC = () => {
                   <FaWhatsapp className="text-2xl" />
                   Consultar por WhatsApp
                 </a>
-
-                <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-4 rounded-lg font-semibold transition-all shadow-lg">
-                  Reservar ahora
-                </button>
               </div>
 
               <div className="mt-6 pt-6 border-t border-gray-200">
@@ -348,6 +355,21 @@ const TourDetailPageDynamic: React.FC = () => {
             {currentImageIndex + 1} / {tour.images.length}
           </div>
         </div>
+      )}
+
+      {/* Modal de Agregar al Carrito */}
+      {tour && (
+        <AddToCartModal
+          isOpen={showCartModal}
+          onClose={() => setShowCartModal(false)}
+          type="tour"
+          itemId={tour.id.toString()}
+          itemName={tour.name}
+          city={tour.city}
+          basePrice={tour.price}
+          maxGuests={tour.max_people}
+          imageUrl={tour.images[0]}
+        />
       )}
     </div>
   );

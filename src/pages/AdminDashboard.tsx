@@ -3,25 +3,23 @@ import { supabase } from '../supabaseClient';
 import { Building2, Map, Users, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-interface Booking {
+interface Reservation {
   id: string;
   user_id: string;
-  booking_type: string;
+  reservation_type: string;
+  item_id: string;
+  item_name: string;
   check_in: string;
   check_out: string | null;
   guests: number;
   total_price: number;
   status: string;
+  payment_status: string;
   created_at: string;
   users: {
     email: string;
+    full_name?: string;
   };
-  properties: {
-    name: string;
-  } | null;
-  tours: {
-    name: string;
-  } | null;
 }
 
 const AdminDashboard = () => {
@@ -31,39 +29,37 @@ const AdminDashboard = () => {
     users: 0,
     bookings: 0,
   });
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [propertiesRes, toursRes, usersRes, bookingsRes] = await Promise.all([
+        const [propertiesRes, toursRes, usersRes, reservationsRes] = await Promise.all([
           supabase.from('properties').select('id', { count: 'exact', head: true }),
           supabase.from('tours').select('id', { count: 'exact', head: true }),
           supabase.from('users').select('id', { count: 'exact', head: true }),
-          supabase.from('bookings').select('id', { count: 'exact', head: true }),
+          supabase.from('reservations').select('id', { count: 'exact', head: true }),
         ]);
 
         setStats({
           properties: propertiesRes.count || 0,
           tours: toursRes.count || 0,
           users: usersRes.count || 0,
-          bookings: bookingsRes.count || 0,
+          bookings: reservationsRes.count || 0,
         });
 
-        // Fetch recent bookings with user and property/tour info
-        const { data: bookingsData } = await supabase
-          .from('bookings')
+        // Fetch recent reservations with user info
+        const { data: reservationsData } = await supabase
+          .from('reservations')
           .select(`
             *,
-            users(email),
-            properties(name),
-            tours(name)
+            users(email, full_name)
           `)
           .order('created_at', { ascending: false })
           .limit(10);
 
-        setBookings(bookingsData || []);
+        setReservations(reservationsData || []);
       } catch (error) {
         console.error('Error fetching stats:', error);
       } finally {
@@ -202,47 +198,45 @@ const AdminDashboard = () => {
           <p className="text-xs lg:text-sm text-gray-500 mt-1">Últimas 10 reservaciones realizadas</p>
         </div>
         
-        {bookings.length > 0 ? (
+        {reservations.length > 0 ? (
           <>
             {/* Vista móvil - Tarjetas */}
             <div className="lg:hidden divide-y divide-gray-200">
-              {bookings.map((booking) => (
-                <div key={booking.id} className="p-4">
+              {reservations.map((reservation) => (
+                <div key={reservation.id} className="p-4">
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
                       <p className="font-semibold text-gray-800 text-sm">
-                        {booking.booking_type === 'property' 
-                          ? booking.properties?.name 
-                          : booking.tours?.name}
+                        {reservation.item_name}
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">{booking.users?.email || 'N/A'}</p>
+                      <p className="text-xs text-gray-500 mt-1">{reservation.users?.email || 'N/A'}</p>
                     </div>
-                    {getStatusBadge(booking.status)}
+                    {getStatusBadge(reservation.status)}
                   </div>
                   <div className="grid grid-cols-2 gap-2 mt-3">
                     <div>
                       <p className="text-xs text-gray-500">Tipo</p>
                       <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold mt-0.5 ${
-                        booking.booking_type === 'property' 
+                        reservation.reservation_type === 'property' 
                           ? 'bg-blue-100 text-blue-800' 
                           : 'bg-yellow-100 text-yellow-800'
                       }`}>
-                        {booking.booking_type === 'property' ? 'Propiedad' : 'Tour'}
+                        {reservation.reservation_type === 'property' ? 'Propiedad' : 'Tour'}
                       </span>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Fecha</p>
                       <p className="text-sm font-medium text-gray-800">
-                        {new Date(booking.check_in).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' })}
+                        {new Date(reservation.check_in).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' })}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Huéspedes</p>
-                      <p className="text-sm font-medium text-gray-800">{booking.guests}</p>
+                      <p className="text-sm font-medium text-gray-800">{reservation.guests}</p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Total</p>
-                      <p className="text-sm font-bold text-gray-800">${booking.total_price.toLocaleString()}</p>
+                      <p className="text-sm font-bold text-gray-800">${reservation.total_price.toLocaleString()}</p>
                     </div>
                   </div>
                 </div>
@@ -278,36 +272,34 @@ const AdminDashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {bookings.map((booking) => (
-                    <tr key={booking.id} className="hover:bg-gray-50">
+                  {reservations.map((reservation) => (
+                    <tr key={reservation.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm text-gray-800">
-                        {booking.users?.email || 'N/A'}
+                        {reservation.users?.email || 'N/A'}
                       </td>
                       <td className="px-6 py-4 text-sm font-medium text-gray-800">
-                        {booking.booking_type === 'property' 
-                          ? booking.properties?.name 
-                          : booking.tours?.name}
+                        {reservation.item_name}
                       </td>
                       <td className="px-6 py-4 text-sm">
                         <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          booking.booking_type === 'property' 
+                          reservation.reservation_type === 'property' 
                             ? 'bg-blue-100 text-blue-800' 
                             : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                          {booking.booking_type === 'property' ? 'Propiedad' : 'Tour'}
+                          {reservation.reservation_type === 'property' ? 'Propiedad' : 'Tour'}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
-                        {new Date(booking.check_in).toLocaleDateString('es-ES')}
+                        {new Date(reservation.check_in).toLocaleDateString('es-ES')}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
-                        {booking.guests}
+                        {reservation.guests}
                       </td>
                       <td className="px-6 py-4 text-sm font-semibold text-gray-800">
-                        ${booking.total_price.toLocaleString()}
+                        ${reservation.total_price.toLocaleString()}
                       </td>
                       <td className="px-6 py-4">
-                        {getStatusBadge(booking.status)}
+                        {getStatusBadge(reservation.status)}
                       </td>
                     </tr>
                   ))}

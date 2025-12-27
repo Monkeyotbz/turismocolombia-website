@@ -1,7 +1,7 @@
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Home, Building2, Map, Users, Settings, LogOut, LayoutDashboard, Menu, X } from 'lucide-react';
+import { Home, Building2, Map, Users, Settings, LogOut, LayoutDashboard, Menu, X, Calendar } from 'lucide-react';
 
 const AdminLayout = () => {
   const { user, signOut } = useAuth();
@@ -18,6 +18,7 @@ const AdminLayout = () => {
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'Propiedades', href: '/admin/properties', icon: Building2 },
     { name: 'Tours', href: '/admin/tours', icon: Map },
+    { name: 'Reservaciones', href: '/admin/reservations', icon: Calendar },
     { name: 'Usuarios', href: '/admin/users', icon: Users },
     { name: 'Configuración', href: '/admin/settings', icon: Settings },
   ];

@@ -2,18 +2,21 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, LogOut, Calendar, MapPin } from 'lucide-react';
+import { User, LogOut, Calendar, MapPin, CreditCard, MessageSquare, Phone, Mail, Download, Eye, DollarSign } from 'lucide-react';
 
 interface Reservation {
   id: string;
   item_name: string;
+  item_id: string;
   reservation_type: string;
   check_in: string;
   check_out: string | null;
   guests: number;
   total_price: number;
+  base_price: number;
   status: string;
   payment_status: string;
+  payment_method: string | null;
   created_at: string;
 }
 
@@ -103,6 +106,29 @@ export default function ProfilePage() {
       completed: 'bg-blue-100 text-blue-800',
     };
     return badges[status] || 'bg-gray-100 text-gray-800';
+  };
+
+  const getPaymentBadge = (status: string) => {
+    const badges: Record<string, string> = {
+      pending: 'bg-orange-100 text-orange-800',
+      paid: 'bg-green-100 text-green-800',
+      failed: 'bg-red-100 text-red-800',
+    };
+    return badges[status] || 'bg-gray-100 text-gray-800';
+  };
+
+  const handleContactSupport = () => {
+    // WhatsApp de soporte
+    const supportPhone = '573145284548';
+    const message = encodeURIComponent(
+      `Hola, necesito ayuda con mi reserva. Usuario: ${user?.email}`
+    );
+    window.open(`https://wa.me/${supportPhone}?text=${message}`, '_blank');
+  };
+
+  const handlePayment = (reservationId: string) => {
+    // Navegar a página de pago
+    navigate(`/payment/${reservationId}`);
   };
 
   if (loading) {
@@ -247,49 +273,131 @@ export default function ProfilePage() {
                   {reservations.map((reservation) => (
                     <div
                       key={reservation.id}
-                      className="border rounded-xl p-4 hover:shadow-md transition"
+                      className="border-2 border-gray-100 rounded-xl p-5 hover:shadow-lg transition-all duration-200 bg-gradient-to-br from-white to-gray-50"
                     >
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h3 className="font-bold text-lg">{reservation.item_name}</h3>
-                          <p className="text-sm text-gray-500 capitalize">
-                            {reservation.reservation_type === 'property' ? 'Propiedad' : 'Tour'}
-                          </p>
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1">
+                          <h3 className="font-bold text-lg text-gray-800 mb-1">
+                            {reservation.item_name}
+                          </h3>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                              reservation.reservation_type === 'property' 
+                                ? 'bg-blue-100 text-blue-700' 
+                                : 'bg-yellow-100 text-yellow-700'
+                            }`}>
+                              {reservation.reservation_type === 'property' ? '🏠 Hospedaje' : '✈️ Tour'}
+                            </span>
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadge(reservation.status)}`}>
+                              {reservation.status === 'pending' && '⏳ Pendiente'}
+                              {reservation.status === 'confirmed' && '✅ Confirmado'}
+                              {reservation.status === 'cancelled' && '❌ Cancelado'}
+                              {reservation.status === 'completed' && '✔️ Completado'}
+                            </span>
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getPaymentBadge(reservation.payment_status)}`}>
+                              {reservation.payment_status === 'pending' && '💳 Pago Pendiente'}
+                              {reservation.payment_status === 'paid' && '✅ Pagado'}
+                              {reservation.payment_status === 'failed' && '⚠️ Pago Fallido'}
+                            </span>
+                          </div>
                         </div>
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadge(
-                            reservation.status
-                          )}`}
-                        >
-                          {reservation.status === 'pending' && 'Pendiente'}
-                          {reservation.status === 'confirmed' && 'Confirmado'}
-                          {reservation.status === 'cancelled' && 'Cancelado'}
-                          {reservation.status === 'completed' && 'Completado'}
-                        </span>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 text-sm mt-3">
-                        <div>
-                          <p className="text-gray-500">Check-in</p>
-                          <p className="font-medium">{formatDate(reservation.check_in)}</p>
+                      {/* Details Grid */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 pb-4 border-b border-gray-200">
+                        <div className="flex items-start gap-2">
+                          <Calendar className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <p className="text-xs text-gray-500">Check-in</p>
+                            <p className="font-semibold text-sm text-gray-800">
+                              {formatDate(reservation.check_in)}
+                            </p>
+                          </div>
                         </div>
                         {reservation.check_out && (
-                          <div>
-                            <p className="text-gray-500">Check-out</p>
-                            <p className="font-medium">{formatDate(reservation.check_out)}</p>
+                          <div className="flex items-start gap-2">
+                            <Calendar className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="text-xs text-gray-500">Check-out</p>
+                              <p className="font-semibold text-sm text-gray-800">
+                                {formatDate(reservation.check_out)}
+                              </p>
+                            </div>
                           </div>
                         )}
-                        <div>
-                          <p className="text-gray-500">Huéspedes</p>
-                          <p className="font-medium">{reservation.guests} persona(s)</p>
+                        <div className="flex items-start gap-2">
+                          <User className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <p className="text-xs text-gray-500">Huéspedes</p>
+                            <p className="font-semibold text-sm text-gray-800">
+                              {reservation.guests} persona{reservation.guests !== 1 ? 's' : ''}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-gray-500">Total</p>
-                          <p className="font-bold text-blue-600">
-                            {formatPrice(reservation.total_price)}
-                          </p>
+                        <div className="flex items-start gap-2">
+                          <DollarSign className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <p className="text-xs text-gray-500">Total</p>
+                            <p className="font-bold text-sm text-blue-600">
+                              {formatPrice(reservation.total_price)}
+                            </p>
+                          </div>
                         </div>
                       </div>
+
+                      {/* Action Buttons */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        <Link
+                          to={`/booking-confirmation?id=${reservation.id}`}
+                          className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                        >
+                          <Eye className="w-4 h-4" />
+                          <span className="hidden sm:inline">Ver Detalles</span>
+                          <span className="sm:hidden">Ver</span>
+                        </Link>
+                        
+                        {reservation.payment_status === 'pending' && (
+                          <button
+                            onClick={() => handlePayment(reservation.id)}
+                            className="flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                          >
+                            <CreditCard className="w-4 h-4" />
+                            <span className="hidden sm:inline">Pagar Ahora</span>
+                            <span className="sm:hidden">Pagar</span>
+                          </button>
+                        )}
+                        
+                        <button
+                          onClick={handleContactSupport}
+                          className="flex items-center justify-center gap-2 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                          <span className="hidden sm:inline">Soporte</span>
+                          <span className="sm:hidden">Chat</span>
+                        </button>
+                        
+                        <a
+                          href={`mailto:soporte@turismocolombia.com?subject=Reserva ${reservation.id.slice(0, 8)}`}
+                          className="flex items-center justify-center gap-2 px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium"
+                        >
+                          <Mail className="w-4 h-4" />
+                          <span className="hidden sm:inline">Email</span>
+                          <span className="sm:hidden">Mail</span>
+                        </a>
+                      </div>
+
+                      {/* Payment Alert */}
+                      {reservation.payment_status === 'pending' && reservation.status === 'pending' && (
+                        <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                          <p className="text-sm text-yellow-800 flex items-center gap-2">
+                            <CreditCard className="w-4 h-4" />
+                            <span className="font-medium">
+                              ⚠️ Completa tu pago para confirmar la reserva
+                            </span>
+                          </p>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

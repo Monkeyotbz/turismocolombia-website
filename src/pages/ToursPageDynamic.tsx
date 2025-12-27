@@ -126,14 +126,14 @@ const ToursPageDynamic: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-20 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white pt-28 pb-16 px-4 sm:pt-24">
       <div className="container mx-auto">
         {/* Header */}
-        <div className="mb-10">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+        <div className="mb-10 text-center sm:text-left">
+          <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 break-words">
             Todos los <span className="text-blue-600">Tours</span>
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
             Descubre experiencias únicas en los destinos más hermosos de Colombia
           </p>
         </div>

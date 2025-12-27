@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { Plus, Edit, Trash2, Eye, Search, Calendar } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Calendar, DollarSign } from 'lucide-react';
 import PropertyFormModal from '../components/admin/PropertyFormModal';
 import PropertyCalendar from '../components/admin/PropertyCalendar';
+import AdminPropertyPricing from '../components/admin/AdminPropertyPricing';
 
 interface Property {
   id: string;
@@ -35,6 +36,8 @@ const AdminProperties = () => {
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [calendarProperty, setCalendarProperty] = useState<Property | null>(null);
+  const [isPricingOpen, setIsPricingOpen] = useState(false);
+  const [pricingProperty, setPricingProperty] = useState<Property | null>(null);
 
   useEffect(() => {
     fetchProperties();
@@ -123,6 +126,16 @@ const AdminProperties = () => {
   const handleCloseCalendar = () => {
     setIsCalendarOpen(false);
     setCalendarProperty(null);
+  };
+
+  const handleOpenPricing = (property: Property) => {
+    setPricingProperty(property);
+    setIsPricingOpen(true);
+  };
+
+  const handleClosePricing = () => {
+    setIsPricingOpen(false);
+    setPricingProperty(null);
   };
 
   const filteredProperties = properties.filter(p =>
@@ -255,6 +268,13 @@ const AdminProperties = () => {
                   
                   <div className="flex items-center gap-1.5">
                     <button
+                      onClick={() => handleOpenPricing(property)}
+                      className="flex-1 px-2 py-1.5 text-blue-600 bg-blue-50 rounded-lg text-xs font-medium hover:bg-blue-100 active:bg-blue-200 transition-colors flex items-center justify-center gap-1"
+                    >
+                      <DollarSign className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span className="hidden xs:inline">Precios</span>
+                    </button>
+                    <button
                       onClick={() => handleOpenCalendar(property)}
                       className="flex-1 px-2 py-1.5 text-purple-600 bg-purple-50 rounded-lg text-xs font-medium hover:bg-purple-100 active:bg-purple-200 transition-colors flex items-center justify-center gap-1"
                     >
@@ -375,37 +395,37 @@ const AdminProperties = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <button
+                        onClick={() => handleOpenPricing(property)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Configurar precios"
+                      >
+                        <DollarSign className="w-5 h-5" />
+                      </button>
+                      <button
                         onClick={() => handleOpenCalendar(property)}
                         className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
                         title="Ver calendario"
                       >
-                        <Calendar className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleOpenEdit(property)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="Ver detalles"
-                      >
-                        <Eye className="w-4 h-4" />
+                        <Calendar className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => handleOpenEdit(property)}
                         className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                         title="Editar"
                       >
-                        <Edit className="w-4 h-4" />
+                        <Edit className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => handleDelete(property.id)}
                         className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         title="Eliminar"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-5 h-5" />
                       </button>
                     </div>
                   </td>
                 </tr>
-                );
+              );
               })}
             </tbody>
           </table>
@@ -434,6 +454,15 @@ const AdminProperties = () => {
           propertyName={calendarProperty.name}
           isOpen={isCalendarOpen}
           onClose={handleCloseCalendar}
+        />
+      )}
+
+      {/* Configuración de Precios */}
+      {isPricingOpen && pricingProperty && (
+        <AdminPropertyPricing
+          propertyId={pricingProperty.id}
+          propertyName={pricingProperty.name}
+          onClose={handleClosePricing}
         />
       )}
     </div>

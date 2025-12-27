@@ -25,6 +25,7 @@ import LoginPageNew from './pages/LoginPageNew';
 import SignupPageNew from './pages/SignupPageNew';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
+import ProfilePageNew from './pages/ProfilePageNew';
 import BlogPage from './pages/BlogPage';
 import NosotrosPage from './pages/NosotrosPage';
 import DestinosPage from './pages/DestinosPage';
@@ -44,6 +45,11 @@ import CheckoutPageNew from './pages/CheckoutPageNew';
 import BookingConfirmationPage from './pages/BookingConfirmationPage';
 import CartPage from './pages/CartPage';
 import PaymentPage from './pages/PaymentPage';
+import AdminChats from './pages/AdminChats';
+import AdminChatView from './pages/AdminChatView';
+import AdminChatSettings from './pages/AdminChatSettings';
+import MyReservations from './pages/MyReservations';
+import ReservationConfirmationPage from './pages/ReservationConfirmationPage';
 
 // Layout wrapper para rutas públicas
 function PublicLayout({ children }: { children: React.ReactNode }) {
@@ -79,8 +85,9 @@ function App() {
             <Route path="/signup" element={<SignupPageNew />} />
             <Route path="/register" element={<SignupPageNew />} />
             <Route path="/registro" element={<SignupPageNew />} />
-            <Route path="/perfil" element={<ProfilePage />} />
-            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/perfil" element={<ProfilePageNew />} />
+            <Route path="/profile" element={<ProfilePageNew />} />
+            <Route path="/profile-old" element={<ProfilePage />} />
             <Route
               path="/dashboard"
               element={
@@ -98,10 +105,13 @@ function App() {
             <Route path="/pago" element={<PagoPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/carrito" element={<CartPage />} />
+            <Route path="/my-reservations" element={<MyReservations />} />
+            <Route path="/mis-reservas" element={<MyReservations />} />
             <Route path="/booking/:id" element={<BookingPage />} />
             <Route path="/checkout" element={<CheckoutPageNew />} />
             <Route path="/checkout-old" element={<CheckoutPage />} />
             <Route path="/booking-confirmation" element={<BookingConfirmationPage />} />
+            <Route path="/reservation-confirmation" element={<ReservationConfirmationPage />} />
             <Route path="/payment/:id" element={<PaymentPage />} />
             
             {/* Admin Routes */}
@@ -113,6 +123,9 @@ function App() {
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="reservations" element={<AdminReservations />} />
                 <Route path="reservations/:id" element={<ReservationDetail />} />
+                <Route path="chats" element={<AdminChats />} />
+                <Route path="chat/:id" element={<AdminChatView />} />
+                <Route path="chat-settings" element={<AdminChatSettings />} />
                 <Route path="settings" element={<div className="p-6"><h1 className="text-2xl font-bold">Configuración</h1><p className="text-gray-600 mt-2">Próximamente...</p></div>} />
               </Route>
             </Route>

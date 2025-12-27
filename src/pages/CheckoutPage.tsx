@@ -261,7 +261,7 @@ const CheckoutPage = () => {
                         Procesando pago...
                       </span>
                     ) : (
-                      `Pagar $${priceBreakdown?.totalPrice.toLocaleString('es-CO')}`
+                      `Pagar $${(priceBreakdown?.grandTotal || priceBreakdown?.totalPrice || 0).toLocaleString('es-CO')}`
                     )}
                   </button>
                 </form>
@@ -312,11 +312,60 @@ const CheckoutPage = () => {
                 </div>
 
                 <div className="border-t-2 pt-6">
+                  {priceBreakdown && (
+                    <div className="space-y-3 mb-6">
+                      <h3 className="font-semibold text-gray-900">Desglose de precios</h3>
+                      
+                      {/* Precio base */}
+                      <div className="flex justify-between text-sm text-gray-600">
+                        <span>${priceBreakdown.pricePerNight?.toLocaleString('es-CO')} × {priceBreakdown.nights} noches</span>
+                        <span className="font-medium">${priceBreakdown.basePrice?.toLocaleString('es-CO')}</span>
+                      </div>
+
+                      {/* Descuentos */}
+                      {priceBreakdown.discountAmount > 0 && (
+                        <div className="flex justify-between text-sm text-green-600">
+                          <span>{priceBreakdown.discountReason}</span>
+                          <span>-${priceBreakdown.discountAmount.toLocaleString('es-CO')}</span>
+                        </div>
+                      )}
+
+                      {/* Subtotal */}
+                      <div className="flex justify-between text-sm font-medium pt-2 border-t">
+                        <span>Subtotal</span>
+                        <span>${priceBreakdown.subtotal?.toLocaleString('es-CO')}</span>
+                      </div>
+
+                      {/* Cargos */}
+                      <div className="flex justify-between text-sm text-gray-600">
+                        <span>Cargo por limpieza</span>
+                        <span>${priceBreakdown.cleaningFee?.toLocaleString('es-CO')}</span>
+                      </div>
+                      
+                      <div className="flex justify-between text-sm text-gray-600">
+                        <span>Cargo por servicio</span>
+                        <span>${priceBreakdown.serviceFee?.toLocaleString('es-CO')}</span>
+                      </div>
+
+                      {/* IVA */}
+                      <div className="flex justify-between text-sm text-gray-600">
+                        <span>IVA (19%)</span>
+                        <span>${priceBreakdown.ivaAmount?.toLocaleString('es-CO')}</span>
+                      </div>
+
+                      {/* Impuesto turístico */}
+                      <div className="flex justify-between text-sm text-gray-600">
+                        <span>Impuesto turístico</span>
+                        <span>${priceBreakdown.tourismTax?.toLocaleString('es-CO')}</span>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="bg-blue-50 rounded-lg p-4 mb-4">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-gray-700 font-semibold">Total</span>
+                      <span className="text-gray-700 font-semibold">Total a pagar</span>
                       <span className="text-2xl font-bold text-blue-600">
-                        ${priceBreakdown?.totalPrice.toLocaleString('es-CO')}
+                        ${priceBreakdown?.grandTotal?.toLocaleString('es-CO') || priceBreakdown?.totalPrice?.toLocaleString('es-CO')}
                       </span>
                     </div>
                     <p className="text-xs text-gray-600">Pago único en COP</p>

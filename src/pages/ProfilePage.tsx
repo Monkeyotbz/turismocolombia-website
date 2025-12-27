@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, LogOut, Calendar, MapPin, CreditCard, MessageSquare, Phone, Mail, Download, Eye, DollarSign } from 'lucide-react';
+import { User, LogOut, Calendar, MapPin, CreditCard, MessageSquare, Mail, Eye, DollarSign } from 'lucide-react';
 
 interface Reservation {
   id: string;
@@ -129,6 +129,30 @@ export default function ProfilePage() {
   const handlePayment = (reservationId: string) => {
     // Navegar a página de pago
     navigate(`/payment/${reservationId}`);
+  };
+
+  const handleDeleteReservation = async (reservationId: string, itemName: string) => {
+    if (!confirm(`¿Estás seguro de eliminar la reserva "${itemName}"?\nEsta acción no se puede deshacer.`)) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('reservations')
+        .delete()
+        .eq('id', reservationId)
+        .eq('user_id', user?.id); // Seguridad extra
+
+      if (error) throw error;
+
+      // Actualizar la lista de reservas
+      setReservations(prev => prev.filter(r => r.id !== reservationId));
+      
+      alert('Reserva eliminada exitosamente');
+    } catch (error) {
+      console.error('Error al eliminar reserva:', error);
+      alert('Error al eliminar la reserva. Por favor intenta nuevamente.');
+    }
   };
 
   if (loading) {
@@ -357,7 +381,7 @@ export default function ProfilePage() {
                           <span className="sm:hidden">Ver</span>
                         </Link>
                         
-                        {reservation.payment_status === 'pending' && (
+                        {reservation.payment_status === 'pending' && reservation.status === 'pending' && (
                           <button
                             onClick={() => handlePayment(reservation.id)}
                             className="flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
@@ -377,14 +401,25 @@ export default function ProfilePage() {
                           <span className="sm:hidden">Chat</span>
                         </button>
                         
-                        <a
-                          href={`mailto:soporte@turismocolombia.com?subject=Reserva ${reservation.id.slice(0, 8)}`}
-                          className="flex items-center justify-center gap-2 px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium"
-                        >
-                          <Mail className="w-4 h-4" />
-                          <span className="hidden sm:inline">Email</span>
-                          <span className="sm:hidden">Mail</span>
-                        </a>
+                        {reservation.status === 'pending' && reservation.payment_status === 'pending' ? (
+                          <button
+                            onClick={() => handleDeleteReservation(reservation.id, reservation.item_name)}
+                            className="flex items-center justify-center gap-2 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                          >
+                            <Mail className="w-4 h-4" />
+                            <span className="hidden sm:inline">Eliminar</span>
+                            <span className="sm:hidden">✕</span>
+                          </button>
+                        ) : (
+                          <a
+                            href={`mailto:soporte@turismocolombia.com?subject=Reserva ${reservation.id.slice(0, 8)}`}
+                            className="flex items-center justify-center gap-2 px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium"
+                          >
+                            <Mail className="w-4 h-4" />
+                            <span className="hidden sm:inline">Email</span>
+                            <span className="sm:hidden">Mail</span>
+                          </a>
+                        )}
                       </div>
 
                       {/* Payment Alert */}

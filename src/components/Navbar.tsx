@@ -29,6 +29,16 @@ const Navbar = () => {
     navigate('/');
   };
 
+  const CartBadge: React.FC = () => (
+    <>
+      {itemCount > 0 && (
+        <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center">
+          {itemCount}
+        </span>
+      )}
+    </>
+  );
+
   const navbarClasses = `fixed w-full z-40 transition-all duration-300 top-[28px] bg-white shadow-md ${
     isScrolled ? 'py-2' : 'py-3.5'
   }`;
@@ -147,14 +157,22 @@ const Navbar = () => {
               to="/perfil"
               className="flex items-center gap-1.5 lg:gap-2 text-xs lg:text-sm font-semibold text-blue-700 hover:text-blue-900 transition-colors"
             >
-              <div className="w-7 h-7 lg:w-8 lg:h-8 bg-gradient-to-br from-yellow-500 to-red-600 rounded-full flex items-center justify-center text-white text-xs lg:text-sm font-bold">
-                {firstName?.[0]?.toUpperCase() || '?'}
-              </div>
+              {profile?.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt="Avatar"
+                  className="w-7 h-7 lg:w-8 lg:h-8 rounded-full object-cover border-2 border-blue-500"
+                />
+              ) : (
+                <div className="w-7 h-7 lg:w-8 lg:h-8 bg-gradient-to-br from-blue-500 to-red-600 rounded-full flex items-center justify-center text-white text-xs lg:text-sm font-bold">
+                  {firstName?.[0]?.toUpperCase() || '?'}
+                </div>
+              )}
               <span className="hidden lg:inline">Hola, {firstName}</span>
             </Link>
             <button
               onClick={handleLogout}
-              className="text-xs lg:text-sm font-semibold border-2 border-red-600 text-red-700 bg-white rounded-full px-3 lg:px-4 py-1.5 lg:py-2 transition-all hover:bg-red-600 hover:text-white whitespace-nowrap"
+              className="text-xs lg:text-sm font-semibold border-2 border-[#ff0000] text-[#ff0000] bg-white rounded-full px-3 lg:px-4 py-1.5 lg:py-2 transition-all hover:bg-[#ff0000] hover:text-white whitespace-nowrap"
             >
               Cerrar sesión
             </button>
@@ -162,20 +180,31 @@ const Navbar = () => {
         )}
 
         {/* Botón hamburguesa - solo móvil */}
-        <button
-          className="flex md:hidden text-gray-800 text-3xl ml-auto"
-          onClick={toggleMenu}
-          aria-label="Abrir menú"
-        >
-          {isOpen ? <X /> : <Menu />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden ml-auto">
+          <Link
+            to="/cart"
+            onClick={() => setIsOpen(false)}
+            className="relative p-2 rounded-full text-gray-800 hover:text-red-600 hover:bg-gray-100 transition"
+            aria-label="Ver carrito"
+          >
+            <ShoppingCart className="w-6 h-6" />
+            <CartBadge />
+          </Link>
+          <button
+            className="flex md:hidden text-gray-800 text-3xl"
+            onClick={toggleMenu}
+            aria-label="Abrir menú"
+          >
+            {isOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </div>
 
       {/* Menú móvil */}
       {isOpen && (
         <div className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50" onClick={toggleMenu}>
           <div
-            className="absolute top-0 right-0 w-72 h-full bg-white shadow-2xl"
+            className="absolute top-0 right-0 w-80 max-w-[90%] h-full bg-white shadow-2xl flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header del menú */}
@@ -197,7 +226,7 @@ const Navbar = () => {
             </div>
 
             {/* Navegación */}
-            <div className="flex flex-col py-6 px-4 space-y-1">
+            <div className="flex-1 flex flex-col py-6 px-4 space-y-1 overflow-y-auto">
               <Link
                 to="/"
                 className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-all font-medium"
@@ -241,6 +270,20 @@ const Navbar = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 Destinos
+              </Link>
+
+              <Link
+                to="/cart"
+                className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-all font-medium"
+                onClick={toggleMenu}
+              >
+                <ShoppingCart className="w-5 h-5" />
+                Carrito
+                {itemCount > 0 && (
+                  <span className="ml-auto bg-red-600 text-white text-xs font-bold rounded-full min-w-[22px] h-[22px] px-2 flex items-center justify-center">
+                    {itemCount}
+                  </span>
+                )}
               </Link>
 
               <Link
@@ -307,12 +350,20 @@ const Navbar = () => {
                   )}
                   <Link
                     to="/perfil"
-                    className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-yellow-500 to-red-600 text-white py-3 rounded-lg font-semibold transition-colors hover:from-yellow-600 hover:to-red-700"
+                    className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue-500 to-red-600 text-white py-3 rounded-lg font-semibold transition-colors hover:from-blue-600 hover:to-red-700"
                     onClick={toggleMenu}
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
+                    {profile?.avatar_url ? (
+                      <img
+                        src={profile.avatar_url}
+                        alt="Avatar"
+                        className="w-6 h-6 rounded-full object-cover border-2 border-white"
+                      />
+                    ) : (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    )}
                     Mi Perfil
                   </Link>
                   <button
@@ -320,7 +371,7 @@ const Navbar = () => {
                       handleLogout();
                       toggleMenu();
                     }}
-                    className="flex items-center justify-center gap-2 w-full bg-white border-2 border-red-600 text-red-700 py-3 rounded-lg font-semibold transition-colors hover:bg-red-600 hover:text-white"
+                    className="flex items-center justify-center gap-2 w-full bg-white border-2 border-[#ff0000] text-[#ff0000] py-3 rounded-lg font-semibold transition-colors hover:bg-[#ff0000] hover:text-white"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

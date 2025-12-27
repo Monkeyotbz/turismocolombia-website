@@ -284,13 +284,6 @@ const PropertyDetailPage: React.FC = () => {
 
     return (
       <>
-        <button
-          onClick={() => navigate(-1)}
-          className="fixed top-20 left-4 z-40 bg-white hover:bg-gray-100 p-2 rounded-full shadow-lg transition flex items-center gap-2 px-4"
-        >
-          <ChevronLeft className="w-6 h-6 text-gray-900" />
-          <span className="hidden sm:inline text-gray-900 font-semibold">Atrás</span>
-        </button>
         <PropertyDetail item={property} images={images} ctaLabel="Quiero reservar esta propiedad" />
       </>
     );
@@ -370,22 +363,23 @@ const PropertyDetailPage: React.FC = () => {
       : 0;
 
   return (
-      <div className="max-w-7xl mx-auto pt-40 pb-10 px-2 md:px-6">
+    <div className="min-h-screen bg-gray-50 pt-[140px]">
+      <div className="max-w-7xl mx-auto pb-10 px-2 md:px-6">
         {/* Encabezado */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
         <div>
-          <h1 className="text-3xl font-bold mb-1">{property.name}</h1>
-          <div className="flex items-center gap-2 text-gray-600 text-base">
+          <h1 className="text-xl sm:text-2xl font-bold mb-1">{property.name}</h1>
+          <div className="flex flex-wrap items-center gap-2 text-gray-600 text-sm sm:text-base">
             <FaMapMarkerAlt className="text-blue-500" />
             <span>{property.location}</span>
-            <span className="flex items-center gap-1 ml-4">
+            <span className="flex items-center gap-1 ml-2 sm:ml-4">
               <FaStar className="text-yellow-500" />
               <span className="font-semibold">{property.rating ?? 0}</span>
             </span>
           </div>
         </div>
         <button
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-blue-700 transition"
+          className="bg-blue-600 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold shadow hover:bg-blue-700 transition text-sm sm:text-base w-full md:w-auto"
           onClick={() => document.getElementById('reserva-panel')?.scrollIntoView({ behavior: 'smooth' })}
         >
           Reservar tu apartamento
@@ -609,6 +603,7 @@ const PropertyDetailPage: React.FC = () => {
             </button>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

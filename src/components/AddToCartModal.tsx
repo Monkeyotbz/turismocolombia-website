@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Calendar, Users, Plus, Check } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,11 @@ interface AddToCartModalProps {
   basePrice: number;
   maxGuests?: number;
   imageUrl?: string;
+  initialCheckIn?: string;
+  initialCheckOut?: string;
+  initialGuests?: number;
+  extraGuestFee?: number;
+  baseGuests?: number;
 }
 
 const AddToCartModal = ({
@@ -24,15 +29,29 @@ const AddToCartModal = ({
   city,
   basePrice,
   maxGuests = 10,
-  imageUrl
+  imageUrl,
+  initialCheckIn = '',
+  initialCheckOut = '',
+  initialGuests = 1,
+  extraGuestFee = 30000,
+  baseGuests = 2
 }: AddToCartModalProps) => {
   const navigate = useNavigate();
   const { addItem } = useCart();
   
-  const [checkIn, setCheckIn] = useState('');
-  const [checkOut, setCheckOut] = useState('');
-  const [guests, setGuests] = useState(1);
+  const [checkIn, setCheckIn] = useState(initialCheckIn);
+  const [checkOut, setCheckOut] = useState(initialCheckOut);
+  const [guests, setGuests] = useState(initialGuests);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  // Actualizar valores cuando cambien las props
+  useEffect(() => {
+    if (isOpen) {
+      setCheckIn(initialCheckIn);
+      setCheckOut(initialCheckOut);
+      setGuests(initialGuests);
+    }
+  }, [isOpen, initialCheckIn, initialCheckOut, initialGuests]);
 
   // Calcular noches y precio total
   const calculateNights = () => {
@@ -45,7 +64,29 @@ const AddToCartModal = ({
   };
 
   const nights = type === 'property' ? calculateNights() : undefined;
-  const totalPrice = type === 'property' && nights ? basePrice * nights : basePrice;
+  const subtotal = type === 'property' && nights ? basePrice * nights : basePrice;
+  
+  // Cargo por huéspedes adicionales
+  const extraGuests = Math.max(0, guests - baseGuests);
+  const guestFee = type === 'property' && nights ? extraGuests * extraGuestFee * nights : 0;
+  
+  const serviceFee = subtotal * 0.05;
+  const cleaningFee = type === 'property' ? 50000 : 0;
+  const tax = subtotal * 0.19;
+  const totalPrice = subtotal + guestFee + serviceFee + cleaningFee + tax;
+
+  // Debug: mostrar cálculo en consola
+  console.log('=== CÁLCULO DE PRECIO ===');
+  console.log('Base price por noche:', basePrice);
+  console.log('Noches:', nights);
+  console.log('Subtotal:', subtotal);
+  console.log('Huéspedes:', guests, '| Base huéspedes:', baseGuests, '| Extra:', extraGuests);
+  console.log('Cargo por huéspedes:', guestFee);
+  console.log('Service fee (5%):', serviceFee);
+  console.log('Cleaning fee:', cleaningFee);
+  console.log('Tax (19%):', tax);
+  console.log('TOTAL FINAL:', totalPrice);
+  console.log('========================');
 
   const handleAddToCart = () => {
     if (!checkIn) {
@@ -238,19 +279,49 @@ const AddToCartModal = ({
               </p>
             </div>
 
-            {/* Resumen */}
+            {/* Resumen detallado */}
             {nights !== undefined && nights > 0 && (
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="flex justify-between text-sm mb-2">
+              <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                <h4 className="font-semibold text-gray-900 mb-3">Desglose de precios</h4>
+                
+                <div className="flex justify-between text-sm">
                   <span className="text-gray-600">
                     ${basePrice.toLocaleString()} × {nights} {nights === 1 ? 'noche' : 'noches'}
                   </span>
-                  <span className="font-semibold">${totalPrice.toLocaleString()}</span>
+                  <span className="font-medium">${subtotal.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-base font-bold text-gray-800 pt-2 border-t border-gray-200">
+
+                {extraGuests > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">
+                      {extraGuests} {extraGuests === 1 ? 'huésped adicional' : 'huéspedes adicionales'} × ${extraGuestFee.toLocaleString()}
+                    </span>
+                    <span className="font-medium">${guestFee.toLocaleString()}</span>
+                  </div>
+                )}
+
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Cargo por servicio (5%)</span>
+                  <span className="font-medium">${serviceFee.toLocaleString()}</span>
+                </div>
+
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Cargo por limpieza</span>
+                  <span className="font-medium">${cleaningFee.toLocaleString()}</span>
+                </div>
+
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">IVA (19%)</span>
+                  <span className="font-medium">${tax.toLocaleString()}</span>
+                </div>
+
+                <div className="flex justify-between text-base font-bold text-gray-800 pt-3 border-t border-gray-300">
                   <span>Total</span>
                   <span className="text-blue-600">${totalPrice.toLocaleString()}</span>
                 </div>
+                <p className="text-xs text-gray-500 text-center mt-1">
+                  Precio total por {nights} {nights === 1 ? 'noche' : 'noches'}
+                </p>
               </div>
             )}
           </div>

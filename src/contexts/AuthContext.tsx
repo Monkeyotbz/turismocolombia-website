@@ -11,6 +11,7 @@ interface UserProfile {
   document_number?: string;
   country?: string;
   city?: string;
+  avatar_url?: string;
 }
 
 interface AuthContextType {

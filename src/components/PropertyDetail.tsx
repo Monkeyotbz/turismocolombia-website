@@ -21,7 +21,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ item, images = [item.im
   };
 
   return (
-    <div className="bg-white pt-40">
+    <div className="bg-white pt-[140px]">
       {/* Galería de imágenes */}
       <div className="w-full bg-gray-900">
         {/* Imagen principal */}

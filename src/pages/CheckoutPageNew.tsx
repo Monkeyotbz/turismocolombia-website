@@ -131,20 +131,29 @@ const CheckoutPageNew = () => {
         reservations.push(data);
       }
 
-      // 3. Limpiar carrito
+      // 3. Guardar datos de reserva para la página de confirmación
+      const reservationSummary = {
+        propertyName: items[0]?.itemName || 'TurismoColombia.fit',
+        checkIn: items[0]?.checkIn ? new Date(items[0].checkIn).toLocaleDateString('es-CO') : '',
+        checkOut: items[0]?.checkOut ? new Date(items[0].checkOut).toLocaleDateString('es-CO') : '',
+        guests: items.reduce((sum, item) => sum + item.guests, 0),
+        total: totalAmount,
+        items: items.map(item => ({
+          name: item.itemName,
+          type: item.type,
+          nights: item.nights,
+          guests: item.guests,
+          price: item.totalPrice
+        }))
+      };
+
+      sessionStorage.setItem('lastReservation', JSON.stringify(reservationSummary));
+
+      // 4. Limpiar carrito
       clearCart();
 
-      // 4. Redirigir a página de confirmación
-      navigate('/booking-confirmation', {
-        state: {
-          reservations,
-          customerInfo: {
-            name: formData.fullName,
-            email: formData.email,
-            phone: formData.phone
-          }
-        }
-      });
+      // 5. Redirigir a página de confirmación de reserva
+      navigate('/reservation-confirmation');
 
     } catch (err: any) {
       console.error('Error creating reservation:', err);

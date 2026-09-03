@@ -12,7 +12,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, isStaff } = useAuth();
   const { itemCount } = useCart();
 
   // Efecto para scroll
@@ -58,24 +58,7 @@ const Navbar = () => {
     ? user.email.split('@')[0]
     : '';
   
-  const [isAdmin, setIsAdmin] = React.useState(false);
-
-  // Verificar si es admin
-  React.useEffect(() => {
-    const checkAdmin = async () => {
-      if (!user) return;
-      
-      const { data } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-      
-      setIsAdmin(data?.role === 'admin');
-    };
-    
-    checkAdmin();
-  }, [user]);
+  const isAdmin = isStaff;
 
   return (
     <>

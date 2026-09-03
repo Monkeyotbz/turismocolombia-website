@@ -37,21 +37,15 @@ export default function LoginPage() {
         }
         setLoading(false);
       } else {
-        // Verificar si el usuario es admin
+        // Redirigir a /admin si es staff (editor/admin)
         const { data: { user } } = await supabase.auth.getUser();
-        
         if (user) {
-          const { data: userData } = await supabase
-            .from('users')
+          const { data: prof } = await supabase
+            .from('profiles')
             .select('role')
             .eq('id', user.id)
-            .single();
-          
-          console.log('✅ Usuario logueado:', { email: user.email, role: userData?.role });
-          
-          // Redirigir según el rol
-          if (userData?.role === 'admin') {
-            console.log('🚀 Redirigiendo a /admin');
+            .maybeSingle();
+          if (prof?.role === 'admin' || prof?.role === 'editor') {
             navigate('/admin');
             return;
           }

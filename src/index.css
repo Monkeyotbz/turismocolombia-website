@@ -5,6 +5,65 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply bg-cream text-ink font-sans antialiased;
+  }
+  h1, h2, h3 {
+    @apply font-serif font-normal;
+  }
+}
+
+/* Marco neón tricolor de Colombia alrededor de toda la página */
+.page-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  border: 3px solid transparent;
+  border-image: conic-gradient(
+      from 0deg,
+      #e0a32e 0turn,
+      #e0a32e 0.16turn,
+      #0a3fd1 0.30turn,
+      #0a3fd1 0.55turn,
+      #b23a2e 0.70turn,
+      #b23a2e 0.92turn,
+      #e0a32e 1turn
+    )
+    1;
+  animation: tc-frame-pulse 5.5s ease-in-out infinite;
+}
+
+@keyframes tc-frame-pulse {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 0 7px 1px rgba(10, 63, 209, 0.26),
+      inset 0 0 18px 2px rgba(224, 163, 46, 0.09);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 12px 2px rgba(10, 63, 209, 0.4),
+      inset 0 0 26px 3px rgba(224, 163, 46, 0.17);
+  }
+}
+
+@media (max-width: 640px) {
+  .page-frame {
+    border-width: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-frame {
+    animation: none;
+    box-shadow:
+      inset 0 0 9px 1px rgba(10, 63, 209, 0.3),
+      inset 0 0 20px 2px rgba(224, 163, 46, 0.12);
+  }
+}
+
 /* Chat Animations */
 @keyframes slideIn {
   from {

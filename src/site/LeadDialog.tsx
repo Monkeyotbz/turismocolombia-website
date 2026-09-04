@@ -7,6 +7,10 @@ import { Button, buttonClasses } from './ui';
 
 type Prefill = Partial<Pick<LeadInput, 'type' | 'related_type' | 'related_id'>> & {
   itemTitle?: string;
+  /** Texto inicial del campo mensaje (p. ej. contexto de búsqueda: destino y fechas). */
+  message?: string;
+  /** Nº de viajeros pre-cargado. */
+  guests?: number;
 };
 
 interface LeadCtx {
@@ -29,7 +33,13 @@ export function LeadDialogProvider({ children }: { children: React.ReactNode }) 
 function LeadDialog({ prefill, onClose }: { prefill: Prefill; onClose: () => void }) {
   const { locale } = useLocale();
   const { whatsappHref } = useSettings();
-  const [form, setForm] = useState({ name: '', whatsapp: '', email: '', message: '', guests: '' });
+  const [form, setForm] = useState({
+    name: '',
+    whatsapp: '',
+    email: '',
+    message: prefill.message ?? '',
+    guests: prefill.guests ? String(prefill.guests) : '',
+  });
   const [state, setState] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
 
   const es = locale === 'es';

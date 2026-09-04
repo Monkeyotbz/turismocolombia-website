@@ -4,17 +4,30 @@ import { getTours, type TourWithMedia } from '../../lib/queries';
 import { Container } from '../ui';
 import { ExperienceCard } from '../cards';
 import { useLeadDialog } from '../LeadDialog';
+import TripSummary, { useTripQuery } from '../TripSummary';
+
+const deburr = (s: string) =>
+  s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
 
 export default function ToursPage() {
   const { locale } = useLocale();
   const es = locale === 'es';
   const { open } = useLeadDialog();
+  const { destino, guests, leadMessage } = useTripQuery();
   const [rows, setRows] = useState<TourWithMedia[] | null>(null);
   const [city, setCity] = useState<string>('');
 
   useEffect(() => {
     getTours().then(setRows);
   }, []);
+
+  useEffect(() => {
+    if (!destino || !rows) return;
+    const match = (rows.map((r) => r.city).filter(Boolean) as string[]).find(
+      (c) => deburr(c).includes(deburr(destino)) || deburr(destino).includes(deburr(c))
+    );
+    if (match) setCity(match);
+  }, [destino, rows]);
 
   const cities = useMemo(
     () => Array.from(new Set((rows ?? []).map((r) => r.city).filter(Boolean))) as string[],
@@ -35,6 +48,8 @@ export default function ToursPage() {
             : 'Led by locals in every region. Book direct, no fees.'}
         </p>
       </Container>
+
+      <TripSummary />
 
       <Container className="mt-6 flex flex-wrap gap-2 border-b border-line pb-5">
         <button
@@ -68,7 +83,10 @@ export default function ToursPage() {
             <p className="text-muted">
               {es ? 'Todavía no hay tours publicados.' : 'No tours published yet.'}
             </p>
-            <button onClick={() => open({ type: 'tour' })} className="mt-3 font-semibold text-azul">
+            <button
+              onClick={() => open({ type: 'tour', message: leadMessage, guests })}
+              className="mt-3 font-semibold text-azul"
+            >
               {es ? 'Escribinos y te armamos el plan' : 'Message us and we’ll plan it'}
             </button>
           </div>

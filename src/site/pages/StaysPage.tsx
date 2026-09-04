@@ -4,17 +4,30 @@ import { getAccommodations, type StayWithMedia } from '../../lib/queries';
 import { Container } from '../ui';
 import { StayCard } from '../cards';
 import { useLeadDialog } from '../LeadDialog';
+import TripSummary, { useTripQuery } from '../TripSummary';
+
+const deburr = (s: string) =>
+  s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
 
 export default function StaysPage() {
   const { locale } = useLocale();
   const es = locale === 'es';
   const { open } = useLeadDialog();
+  const { destino, guests, leadMessage } = useTripQuery();
   const [rows, setRows] = useState<StayWithMedia[] | null>(null);
   const [city, setCity] = useState('');
 
   useEffect(() => {
     getAccommodations().then(setRows);
   }, []);
+
+  useEffect(() => {
+    if (!destino || !rows) return;
+    const match = (rows.map((r) => r.city).filter(Boolean) as string[]).find(
+      (c) => deburr(c).includes(deburr(destino)) || deburr(destino).includes(deburr(c))
+    );
+    if (match) setCity(match);
+  }, [destino, rows]);
 
   const cities = useMemo(
     () => Array.from(new Set((rows ?? []).map((r) => r.city).filter(Boolean))) as string[],
@@ -35,6 +48,8 @@ export default function StaysPage() {
             : 'Cabins, boutique hotels and apartments picked for location and service.'}
         </p>
       </Container>
+
+      <TripSummary />
 
       <Container className="mt-6 flex flex-wrap gap-2 border-b border-line pb-5">
         <button
@@ -69,7 +84,7 @@ export default function StaysPage() {
               {es ? 'Todavía no hay hospedajes publicados.' : 'No stays published yet.'}
             </p>
             <button
-              onClick={() => open({ type: 'accommodation' })}
+              onClick={() => open({ type: 'accommodation', message: leadMessage, guests })}
               className="mt-3 font-semibold text-azul"
             >
               {es ? 'Contanos qué buscás' : 'Tell us what you need'}

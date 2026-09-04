@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Search } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useLocale } from '../../lib/locale';
 import {
   getFeaturedTours,
@@ -14,8 +14,9 @@ import {
 import type { Row } from '../../lib/supabase';
 import { heroSlidesSorted } from '../../data/heroSlides';
 import { useLeadDialog } from '../LeadDialog';
-import { Container, Button, Eyebrow } from '../ui';
+import { Container, Eyebrow } from '../ui';
 import { Rail, ExperienceCard, StayCard, DestinationTile } from '../cards';
+import SearchBar from '../SearchBar';
 import NewsletterBand from '../NewsletterBand';
 
 const CATEGORIES = [
@@ -68,7 +69,7 @@ export default function HomePage() {
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/25 to-black/70" />
         <Container className="relative flex h-full flex-col justify-center">
-          <div className="max-w-2xl">
+          <div className="max-w-3xl">
             <Eyebrow dark>{es ? 'Colombia, de la mano de quien la vive' : 'Colombia, guided by locals'}</Eyebrow>
             <h1 className="mt-3 font-serif text-4xl leading-[1.05] text-[#FCFAF4] sm:text-6xl">
               {es ? 'Viví la Colombia que no sale en los folletos' : "Experience the Colombia guidebooks miss"}
@@ -78,18 +79,14 @@ export default function HomePage() {
                 ? 'Tours, hospedajes y experiencias con anfitriones locales. Vos elegís, un asesor de la región te arma el plan.'
                 : 'Tours, stays and experiences with local hosts. You choose, a regional advisor builds the plan.'}
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Button size="lg" onClick={() => open()}>
-                {es ? 'Armar mi viaje' : 'Plan my trip'}
-              </Button>
-              <Link
-                to="/tours"
-                className="inline-flex items-center gap-2 rounded-full border border-white/70 px-6 py-3 text-[15px] font-semibold text-white hover:bg-white/10"
-              >
-                <Search className="h-4 w-4" />
-                {es ? 'Ver experiencias' : 'Browse experiences'}
-              </Link>
-            </div>
+            <SearchBar className="mt-7" />
+            <button
+              type="button"
+              onClick={() => open()}
+              className="mt-3 text-sm font-semibold text-white/90 underline decoration-white/40 underline-offset-4 hover:text-white"
+            >
+              {es ? '¿Preferís que te armemos el plan? Escribinos' : 'Rather we plan it for you? Message us'}
+            </button>
             <div className="mt-6 flex flex-wrap gap-x-6 gap-y-1 text-sm font-medium text-[#E4DFD2]">
               <span>{es ? '17 años operando en Colombia' : '17 years operating in Colombia'}</span>
               <span className="opacity-50">·</span>

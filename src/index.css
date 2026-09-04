@@ -9,8 +9,12 @@
   body {
     @apply bg-cream text-ink font-sans antialiased;
   }
-  h1, h2, h3 {
-    @apply font-serif font-normal;
+  h1, h2, h3, h4 {
+    @apply font-sans font-bold tracking-[-0.015em];
+  }
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    @apply outline-none ring-2 ring-azul ring-offset-2 ring-offset-cream;
+    border-radius: 6px;
   }
 }
 

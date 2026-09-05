@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { buttonClasses } from '../site/ui';
 
 export default function SignupPageNew() {
   const [formData, setFormData] = useState({
@@ -60,27 +61,38 @@ export default function SignupPageNew() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-blue-50 px-4 sm:px-6 py-8 sm:py-12">
-      <div className="max-w-md w-full space-y-6 sm:space-y-8">
-        {/* Logo/Header */}
-        <div className="text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Crear cuenta</h2>
-          <p className="mt-2 text-sm sm:text-base text-gray-600">Únete y comienza a reservar</p>
-        </div>
+  const inputCls =
+    'w-full rounded-xl border border-line bg-white px-4 py-2.5 text-[15px] text-ink outline-none transition focus:border-azul focus:ring-2 focus:ring-azul/25';
+  const labelCls = 'mb-1.5 block text-sm font-medium text-ink';
 
-        {/* Formulario */}
-        <form onSubmit={handleSubmit} className="mt-6 sm:mt-8 space-y-5 sm:space-y-6 bg-white p-6 sm:p-8 rounded-2xl shadow-xl">
+  return (
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 sm:px-6">
+      <img src="/brand/login-bg.jpg" alt="" className="absolute inset-0 h-full w-full object-cover" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/20 to-black/55" />
+
+      <div className="relative w-full max-w-md">
+        <Link to="/" className="mb-6 flex justify-center">
+          <img src="/brand/logo-primary-color.svg" alt="Turismo Colombia" className="h-11 w-auto" />
+        </Link>
+
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-5 rounded-[24px] border border-white/40 bg-white/90 p-7 shadow-pop backdrop-blur-md sm:p-9"
+        >
+          <div className="text-center">
+            <h1 className="font-sans text-2xl font-bold text-ink sm:text-3xl">Crear cuenta</h1>
+            <p className="mt-1.5 text-sm text-muted">Sumate y empezá a reservar</p>
+          </div>
+
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-800 px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm">
+            <div className="rounded-xl border border-carmin/25 bg-carmin/10 px-4 py-2.5 text-sm text-carmin">
               {error}
             </div>
           )}
 
-          <div className="space-y-4 sm:space-y-5">
-            {/* Nombre completo */}
+          <div className="space-y-4">
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+              <label htmlFor="fullName" className={labelCls}>
                 Nombre completo
               </label>
               <input
@@ -90,14 +102,13 @@ export default function SignupPageNew() {
                 required
                 value={formData.fullName}
                 onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                className={inputCls}
                 placeholder="Juan Pérez"
               />
             </div>
 
-            {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+              <label htmlFor="email" className={labelCls}>
                 Correo electrónico
               </label>
               <input
@@ -108,14 +119,13 @@ export default function SignupPageNew() {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                className={inputCls}
                 placeholder="tu@email.com"
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+              <label htmlFor="password" className={labelCls}>
                 Contraseña
               </label>
               <input
@@ -126,14 +136,13 @@ export default function SignupPageNew() {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                className={inputCls}
                 placeholder="Mínimo 6 caracteres"
               />
             </div>
 
-            {/* Confirmar Password */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+              <label htmlFor="confirmPassword" className={labelCls}>
                 Confirmar contraseña
               </label>
               <input
@@ -144,47 +153,37 @@ export default function SignupPageNew() {
                 required
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                placeholder="Repite tu contraseña"
+                className={inputCls}
+                placeholder="Repetí tu contraseña"
               />
             </div>
           </div>
 
-          {/* Términos */}
-          <div className="text-xs text-gray-500">
-            Al crear una cuenta, aceptas nuestros{' '}
-            <Link to="/terminos" className="text-purple-600 hover:underline">
+          <p className="text-xs leading-relaxed text-muted">
+            Al crear una cuenta, aceptás nuestros{' '}
+            <Link to="/terminos" className="font-medium text-azul hover:text-azul-hover">
               Términos y Condiciones
             </Link>{' '}
             y{' '}
-            <Link to="/privacidad" className="text-purple-600 hover:underline">
+            <Link to="/privacidad" className="font-medium text-azul hover:text-azul-hover">
               Política de Privacidad
             </Link>
-          </div>
+          </p>
 
-          {/* Botón de Registro */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex justify-center py-2.5 sm:py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm sm:text-base font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-          >
+          <button type="submit" disabled={loading} className={buttonClasses('primary', 'lg', 'w-full')}>
             {loading ? 'Creando cuenta...' : 'Crear cuenta'}
           </button>
 
-          {/* Link a Login */}
-          <div className="text-center">
-            <p className="text-xs sm:text-sm text-gray-600">
-              ¿Ya tienes cuenta?{' '}
-              <Link to="/login" className="font-medium text-purple-600 hover:text-purple-500">
-                Inicia sesión aquí
-              </Link>
-            </p>
-          </div>
+          <p className="text-center text-sm text-muted">
+            ¿Ya tenés cuenta?{' '}
+            <Link to="/login" className="font-semibold text-azul hover:text-azul-hover">
+              Iniciá sesión acá
+            </Link>
+          </p>
         </form>
 
-        {/* Volver al inicio */}
-        <div className="text-center">
-          <Link to="/" className="text-xs sm:text-sm text-gray-500 hover:text-gray-700">
+        <div className="mt-5 text-center">
+          <Link to="/" className="text-sm text-white/80 hover:text-white">
             ← Volver al inicio
           </Link>
         </div>

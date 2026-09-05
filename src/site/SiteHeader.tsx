@@ -31,7 +31,7 @@ export default function SiteHeader() {
       <Container className="flex items-center justify-between py-4">
         <Link to="/" aria-label="Turismo Colombia">
           <img
-            src="/brand/logo-primary.png"
+            src="/brand/logo-primary-color.svg"
             alt="Turismo Colombia"
             className="h-9 w-auto sm:h-11"
           />

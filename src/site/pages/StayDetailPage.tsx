@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Check, ExternalLink, MapPin, MessageCircle } from 'lucide-react';
 import { useLocale } from '../../lib/locale';
 import { getAccommodationBySlug, type StayWithMedia } from '../../lib/queries';
-import { catalogImageUrl } from '../../lib/supabase';
+import { crmImageUrl } from '../../lib/crm';
 import { Container, Money, Button, buttonClasses } from '../ui';
 import { useLeadDialog } from '../LeadDialog';
 import { useSettings } from '../SettingsContext';
@@ -46,15 +46,20 @@ export default function StayDetailPage() {
         <MapPin className="h-3.5 w-3.5 text-muted" /> {[stay.city, stay.region].filter(Boolean).join(', ')}
       </div>
 
-      <div className="mt-4 grid gap-2 overflow-hidden rounded-[20px] sm:grid-cols-3 sm:grid-rows-2" style={{ height: 420 }}>
+      <div className="mt-4 grid gap-2 overflow-hidden rounded-[20px] sm:h-[420px] sm:grid-cols-3 sm:grid-rows-2">
         {gallery.length ? (
           gallery.slice(0, 5).map((im, i) => (
-            <div key={im.storage_path} className={`bg-[#E6DFD0] ${i === 0 ? 'sm:col-span-2 sm:row-span-2' : ''}`}>
-              <img src={catalogImageUrl(im.storage_path)} alt="" className="h-full w-full object-cover" />
+            <div
+              key={im.storage_path}
+              className={`aspect-[4/3] bg-[#E6DFD0] sm:aspect-auto ${
+                i === 0 ? 'sm:col-span-2 sm:row-span-2' : 'hidden sm:block'
+              }`}
+            >
+              <img src={crmImageUrl(im.storage_path)} alt="" className="h-full w-full object-cover" />
             </div>
           ))
         ) : (
-          <div className="flex items-center justify-center bg-[#E6DFD0] text-sm text-muted sm:col-span-3 sm:row-span-2">
+          <div className="flex aspect-[4/3] items-center justify-center bg-[#E6DFD0] text-sm text-muted sm:aspect-auto sm:col-span-3 sm:row-span-2">
             {es ? 'Fotos próximamente' : 'Photos coming soon'}
           </div>
         )}

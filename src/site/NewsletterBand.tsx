@@ -20,7 +20,7 @@ export default function NewsletterBand() {
 
   return (
     <Container className="py-12">
-      <div className="flex flex-col items-start justify-between gap-8 rounded-[22px] bg-azul-deep px-8 py-11 sm:px-14 md:flex-row md:items-center">
+      <div className="flex flex-col items-start justify-between gap-8 rounded-[22px] bg-azul-deep px-6 py-11 sm:px-14 md:flex-row md:items-center">
         <div>
           <div className="font-serif text-3xl leading-tight text-[#FCFAF4]">
             {es
@@ -36,14 +36,14 @@ export default function NewsletterBand() {
             <Check className="h-4 w-4" /> {es ? '¡Listo! Revisá tu correo.' : 'Done! Check your inbox.'}
           </div>
         ) : (
-          <form onSubmit={submit} className="flex w-full shrink-0 gap-2 md:w-auto">
+          <form onSubmit={submit} className="flex w-full shrink-0 flex-col gap-2 sm:flex-row md:w-auto">
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={es ? 'tu@correo.com' : 'you@email.com'}
-              className="w-full min-w-[240px] rounded-full bg-white px-5 py-3 text-sm text-ink outline-none"
+              className="w-full rounded-full bg-white px-5 py-3 text-sm text-ink outline-none sm:min-w-[240px]"
             />
             <Button variant="gold" size="lg" type="submit" disabled={state === 'sending'}>
               {state === 'sending' && <Loader2 className="h-4 w-4 animate-spin" />}

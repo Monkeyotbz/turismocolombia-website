@@ -18,6 +18,8 @@ import LoginPageNew from './pages/LoginPageNew';
 import SignupPageNew from './pages/SignupPageNew';
 import ProfilePageNew from './pages/ProfilePageNew';
 import ConfirmarCorreo from './pages/ConfirmarCorreo';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 function App() {
   return (
@@ -37,6 +39,8 @@ function App() {
             </Route>
 
             <Route path="/login" element={<LoginPageNew />} />
+            <Route path="/recuperar-contrasena" element={<ForgotPasswordPage />} />
+            <Route path="/restablecer-contrasena" element={<ResetPasswordPage />} />
             <Route path="/registro" element={<SignupPageNew />} />
             <Route path="/register" element={<SignupPageNew />} />
             <Route path="/perfil" element={<ProfilePageNew />} />

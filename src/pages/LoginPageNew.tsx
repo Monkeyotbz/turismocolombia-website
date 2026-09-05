@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
+import { buttonClasses } from '../site/ui';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -24,7 +25,7 @@ export default function LoginPage() {
 
       if (error) {
         console.error('Error de login:', error);
-        
+
         // Mensajes de error más específicos
         if (error.message?.includes('Invalid login credentials')) {
           setError('Email o contraseña incorrectos');
@@ -60,26 +61,37 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4 sm:px-6 py-8 sm:py-12">
-      <div className="max-w-md w-full space-y-6 sm:space-y-8">
-        {/* Logo/Header */}
-        <div className="text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Bienvenido</h2>
-          <p className="mt-2 text-sm sm:text-base text-gray-600">Inicia sesión en tu cuenta</p>
-        </div>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 sm:px-6">
+      <img
+        src="/brand/login-bg.jpg"
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/20 to-black/55" />
 
-        {/* Formulario */}
-        <form onSubmit={handleSubmit} className="mt-6 sm:mt-8 space-y-5 sm:space-y-6 bg-white p-6 sm:p-8 rounded-2xl shadow-xl">
+      <div className="relative w-full max-w-md">
+        <Link to="/" className="mb-6 flex justify-center">
+          <img src="/brand/logo-primary-color.svg" alt="Turismo Colombia" className="h-11 w-auto" />
+        </Link>
+
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-5 rounded-[24px] border border-white/40 bg-white/90 p-7 shadow-pop backdrop-blur-md sm:p-9"
+        >
+          <div className="text-center">
+            <h1 className="font-sans text-2xl font-bold text-ink sm:text-3xl">Bienvenido de nuevo</h1>
+            <p className="mt-1.5 text-sm text-muted">Iniciá sesión para gestionar tus reservas</p>
+          </div>
+
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-800 px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm">
+            <div className="rounded-xl border border-carmin/25 bg-carmin/10 px-4 py-2.5 text-sm text-carmin">
               {error}
             </div>
           )}
 
-          <div className="space-y-4 sm:space-y-5">
-            {/* Email */}
+          <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-ink">
                 Correo electrónico
               </label>
               <input
@@ -90,16 +102,20 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="w-full rounded-xl border border-line bg-white px-4 py-2.5 text-[15px] text-ink outline-none transition focus:border-azul focus:ring-2 focus:ring-azul/25"
                 placeholder="tu@email.com"
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-                Contraseña
-              </label>
+              <div className="mb-1.5 flex items-center justify-between">
+                <label htmlFor="password" className="block text-sm font-medium text-ink">
+                  Contraseña
+                </label>
+                <Link to="/recuperar-contrasena" className="text-sm font-medium text-azul hover:text-azul-hover">
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </div>
               <input
                 id="password"
                 name="password"
@@ -108,35 +124,26 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="w-full rounded-xl border border-line bg-white px-4 py-2.5 text-[15px] text-ink outline-none transition focus:border-azul focus:ring-2 focus:ring-azul/25"
                 placeholder="••••••••"
               />
             </div>
           </div>
 
-          {/* Botón de Login */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex justify-center py-2.5 sm:py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm sm:text-base font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-          >
+          <button type="submit" disabled={loading} className={buttonClasses('primary', 'lg', 'w-full')}>
             {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
           </button>
 
-          {/* Link a Registro */}
-          <div className="text-center">
-            <p className="text-xs sm:text-sm text-gray-600">
-              ¿No tienes cuenta?{' '}
-              <Link to="/registro" className="font-medium text-blue-600 hover:text-blue-500">
-                Regístrate aquí
-              </Link>
-            </p>
-          </div>
+          <p className="text-center text-sm text-muted">
+            ¿No tenés cuenta?{' '}
+            <Link to="/registro" className="font-semibold text-azul hover:text-azul-hover">
+              Registrate acá
+            </Link>
+          </p>
         </form>
 
-        {/* Volver al inicio */}
-        <div className="text-center">
-          <Link to="/" className="text-xs sm:text-sm text-gray-500 hover:text-gray-700">
+        <div className="mt-5 text-center">
+          <Link to="/" className="text-sm text-white/80 hover:text-white">
             ← Volver al inicio
           </Link>
         </div>

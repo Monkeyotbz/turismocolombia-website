@@ -70,7 +70,7 @@ function LeadDialog({ prefill, onClose }: { prefill: Prefill; onClose: () => voi
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
+        className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between bg-azul px-6 py-4 text-white">

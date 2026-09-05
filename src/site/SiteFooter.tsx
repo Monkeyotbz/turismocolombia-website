@@ -12,7 +12,7 @@ export default function SiteFooter() {
     <footer className="mt-20 border-t border-line">
       <Container className="grid grid-cols-2 gap-10 py-12 md:grid-cols-4">
         <div className="col-span-2 md:col-span-1">
-          <img src="/brand/logo-primary.png" alt="Turismo Colombia" className="h-10 w-auto" />
+          <img src="/brand/logo-primary-color.svg" alt="Turismo Colombia" className="h-10 w-auto" />
           <p className="mt-3 max-w-[260px] text-sm leading-relaxed text-muted">
             {es
               ? 'Turismo con anfitriones locales en Colombia. Reserva directa, sin comisiones. 17 años.'

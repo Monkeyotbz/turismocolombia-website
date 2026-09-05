@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 import type { Row } from './supabase';
 import type { Json } from '../types/supabase';
+import { crm, CRM_TENANT_ID } from './crm';
 
 export type ImageRow = { storage_path: string; sort_order: number; is_cover: boolean; alt: Json };
 export type FeatureRow = { slug: string; label: Json; kind: string; icon: string | null };
@@ -33,9 +34,10 @@ const TOUR_SELECT = `*, images:tour_images(storage_path, sort_order, is_cover, a
 const TOUR_DETAIL_SELECT = `${TOUR_SELECT}, tour_features(features(slug, label, kind, icon))`;
 
 export async function getFeaturedTours(limit = 8): Promise<TourWithMedia[]> {
-  const { data, error } = await supabase
+  const { data, error } = await crm
     .from('tours')
     .select(TOUR_SELECT)
+    .eq('tenant_id', CRM_TENANT_ID)
     .eq('status', 'published')
     .eq('featured', true)
     .order('sort_order', { ascending: true })
@@ -45,9 +47,10 @@ export async function getFeaturedTours(limit = 8): Promise<TourWithMedia[]> {
 }
 
 export async function getTours(opts: { city?: string; limit?: number } = {}): Promise<TourWithMedia[]> {
-  let q = supabase
+  let q = crm
     .from('tours')
     .select(TOUR_SELECT)
+    .eq('tenant_id', CRM_TENANT_ID)
     .eq('status', 'published')
     .order('featured', { ascending: false })
     .order('sort_order', { ascending: true });
@@ -59,9 +62,10 @@ export async function getTours(opts: { city?: string; limit?: number } = {}): Pr
 }
 
 export async function getTourBySlug(slug: string): Promise<TourWithMedia | null> {
-  const { data, error } = await supabase
+  const { data, error } = await crm
     .from('tours')
     .select(TOUR_DETAIL_SELECT)
+    .eq('tenant_id', CRM_TENANT_ID)
     .eq('slug', slug)
     .maybeSingle();
   if (error) console.error('getTourBySlug', error.message);
@@ -79,9 +83,10 @@ const STAY_SELECT = `*, images:accommodation_images(storage_path, sort_order, is
 const STAY_DETAIL_SELECT = `${STAY_SELECT}, accommodation_features(features(slug, label, kind, icon))`;
 
 export async function getFeaturedAccommodations(limit = 8): Promise<StayWithMedia[]> {
-  const { data, error } = await supabase
+  const { data, error } = await crm
     .from('accommodations')
     .select(STAY_SELECT)
+    .eq('tenant_id', CRM_TENANT_ID)
     .eq('status', 'published')
     .eq('featured', true)
     .order('sort_order', { ascending: true })
@@ -91,9 +96,10 @@ export async function getFeaturedAccommodations(limit = 8): Promise<StayWithMedi
 }
 
 export async function getAccommodations(opts: { city?: string } = {}): Promise<StayWithMedia[]> {
-  let q = supabase
+  let q = crm
     .from('accommodations')
     .select(STAY_SELECT)
+    .eq('tenant_id', CRM_TENANT_ID)
     .eq('status', 'published')
     .order('featured', { ascending: false })
     .order('sort_order', { ascending: true });
@@ -104,9 +110,10 @@ export async function getAccommodations(opts: { city?: string } = {}): Promise<S
 }
 
 export async function getAccommodationBySlug(slug: string): Promise<StayWithMedia | null> {
-  const { data, error } = await supabase
+  const { data, error } = await crm
     .from('accommodations')
     .select(STAY_DETAIL_SELECT)
+    .eq('tenant_id', CRM_TENANT_ID)
     .eq('slug', slug)
     .maybeSingle();
   if (error) console.error('getAccommodationBySlug', error.message);
@@ -121,9 +128,10 @@ export async function getAccommodationBySlug(slug: string): Promise<StayWithMedi
 /* -------------------------------------------------------------- destinations */
 
 export async function getFeaturedDestinations(limit = 6): Promise<DestinationWithMedia[]> {
-  const { data, error } = await supabase
+  const { data, error } = await crm
     .from('destinations')
     .select(`*, images:destination_images(storage_path, sort_order, is_cover, alt)`)
+    .eq('tenant_id', CRM_TENANT_ID)
     .eq('status', 'published')
     .order('featured', { ascending: false })
     .order('sort_order', { ascending: true })

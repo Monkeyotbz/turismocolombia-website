@@ -49,7 +49,7 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero */}
-      <section className="relative h-[560px] overflow-hidden bg-azul-deep sm:h-[620px]">
+      <section className="relative min-h-[560px] overflow-hidden bg-azul-deep py-16 sm:min-h-[620px]">
         {slide && (
           <video
             className="absolute inset-0 h-full w-full object-cover"
@@ -68,10 +68,10 @@ export default function HomePage() {
           </video>
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/25 to-black/70" />
-        <Container className="relative flex h-full flex-col justify-center">
+        <Container className="relative flex flex-col justify-center">
           <div className="max-w-3xl">
             <Eyebrow dark>{es ? 'Colombia, de la mano de quien la vive' : 'Colombia, guided by locals'}</Eyebrow>
-            <h1 className="mt-3 font-serif text-4xl leading-[1.05] text-[#FCFAF4] sm:text-6xl">
+            <h1 className="mt-3 font-serif text-4xl leading-[1.05] text-[#FCFAF4] sm:text-5xl lg:text-6xl">
               {es ? 'Viví la Colombia que no sale en los folletos' : "Experience the Colombia guidebooks miss"}
             </h1>
             <p className="mt-4 max-w-lg text-lg text-[#E9E4D8]">
@@ -163,7 +163,11 @@ export default function HomePage() {
       {/* Historia CEO */}
       <section className="my-14 bg-azul-tint py-16">
         <Container className="grid items-center gap-12 lg:grid-cols-[420px_1fr]">
-          <div className="aspect-[4/5] overflow-hidden rounded-card bg-[#E6DFD0]" />
+          <img
+            src="/Ceo.png"
+            alt={es ? 'Johan Pulgarín, fundador de Turismo Colombia' : 'Johan Pulgarín, founder of Turismo Colombia'}
+            className="aspect-[4/5] w-full rounded-card bg-[#E6DFD0] object-cover"
+          />
           <div>
             <Eyebrow>{es ? 'Nuestra historia' : 'Our story'}</Eyebrow>
             <p className="mt-3 font-serif text-3xl leading-tight text-ink sm:text-[38px]">
@@ -173,8 +177,8 @@ export default function HomePage() {
             </p>
             <p className="mt-4 text-[15px] leading-relaxed text-[#3A362E]">
               {es
-                ? 'Turismo Colombia nació de un momento difícil y se volvió una herramienta para salir adelante y ayudar a otros. Trabajamos con anfitriones, guías y familias de cada región.'
-                : 'Turismo Colombia was born from a hard time and became a way forward — for us and others. We work with hosts, guides and families across every region.'}
+                ? 'Turismo Colombia nació de un momento difícil y se volvió una herramienta de superación personal para salir adelante y ayudar a otros. Johan Pulgarín lidera un equipo de anfitriones, guías y familias de cada región.'
+                : 'Turismo Colombia was born from a hard time and became a tool for personal growth — a way forward for us and others. Johan Pulgarín leads a team of hosts, guides and families across every region.'}
             </p>
             <Link
               to="/nosotros"

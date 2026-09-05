@@ -24,15 +24,19 @@ export default function AboutPage() {
               : 'We are not just another agency. We are a Colombian brand working with hosts, guides and families across every region so you book directly with them.'}
           </p>
         </div>
-        <div className="aspect-[4/5] rounded-card bg-[#E6DFD0]" />
+        <img
+          src="/Ceo.png"
+          alt={es ? 'Johan Pulgarín, fundador de Turismo Colombia' : 'Johan Pulgarín, founder of Turismo Colombia'}
+          className="aspect-[4/5] w-full rounded-card bg-[#E6DFD0] object-cover"
+        />
       </Container>
 
       {/* Historia */}
       <Container className="max-w-3xl py-12">
         <p className="text-[18px] leading-[1.75] text-[#2C2820]">
           {es
-            ? 'Hace más de 17 años empecé a meterle el alma al turismo en Colombia. Esta no es solo una empresa: es una marca que nació de un momento bien oscuro de mi vida. De esos bajonazos también salen cosas grandes, y así fue como me inventé esto, como una herramienta para salir adelante y ayudar a otros a vivir lo mismo.'
-            : 'Over 17 years ago I started pouring my soul into travel in Colombia. This is not just a company: it is a brand born from a very dark moment in my life. Great things can come from those lows, and that is how I invented this — a tool to move forward and help others do the same.'}
+            ? 'Hace más de 17 años empecé a meterle el alma al turismo en Colombia. Esta no es solo una empresa: es una marca que nació en un momento bien oscuro de mi vida, cuando estuve privado de la libertad. De esos bajonazos también salen cosas grandes, y así fue como me inventé esto, como una herramienta de superación personal para salir adelante y ayudar a otros a cumplir sus sueños.'
+            : 'Over 17 years ago I started pouring my soul into travel in Colombia. This is not just a company: it is a brand born from a very dark moment in my life, when I was deprived of my freedom. Great things can come from those lows, and that is how I invented this — a tool for personal growth, to move forward and help others fulfill their dreams.'}
         </p>
         <p className="my-7 border-l-[3px] border-azul pl-5 font-serif text-3xl leading-tight text-azul">
           {es
@@ -41,11 +45,11 @@ export default function AboutPage() {
         </p>
         <p className="text-[18px] leading-[1.75] text-[#2C2820]">
           {es
-            ? 'La técnica es sencilla: gente de la región, cupos pequeños, atención de verdad y un precio justo porque no hay intermediarios cobrando comisión en el medio.'
-            : 'The method is simple: local people, small groups, real attention and a fair price because there are no middlemen taking a cut.'}
+            ? 'La técnica es sencilla: gente de la región, cupos pequeños, atención de verdad y un precio justo porque no hay intermediarios cobrando comisión en el medio. Estoy acá para ayudarte a cumplir tus sueños en Colombia.'
+            : 'The method is simple: local people, small groups, real attention and a fair price because there are no middlemen taking a cut. I am here to help you fulfill your dreams in Colombia.'}
         </p>
         <p className="mt-5 text-[18px] text-[#2C2820]">
-          — {es ? 'Johan, fundador de Turismo Colombia' : 'Johan, founder of Turismo Colombia'}
+          — {es ? 'Johan Pulgarín, fundador y CEO de Turismo Colombia' : 'Johan Pulgarín, founder and CEO of Turismo Colombia'}
         </p>
       </Container>
 

@@ -143,8 +143,8 @@ export default function SearchBar({ className = '' }: { className?: string }) {
         ))}
       </div>
 
-      <div className="flex flex-col divide-y divide-line overflow-visible rounded-[20px] bg-white shadow-pop sm:flex-row sm:divide-x sm:divide-y-0">
-        <Segment icon={MapPin} label={es ? 'Destino' : 'Where'} className="sm:flex-[1.6]">
+      <div className="flex flex-col divide-y divide-line overflow-visible rounded-[20px] bg-white shadow-pop lg:flex-row lg:divide-x lg:divide-y-0">
+        <Segment icon={MapPin} label={es ? 'Destino' : 'Where'} className="lg:flex-[1.6]">
           <input
             list="tc-destinos"
             value={destino}
@@ -162,7 +162,7 @@ export default function SearchBar({ className = '' }: { className?: string }) {
         <Segment
           icon={Calendar}
           label={tipo === 'hospedajes' ? (es ? 'Entrada' : 'Check-in') : es ? 'Fecha' : 'Date'}
-          className="sm:flex-1"
+          className="lg:flex-1"
         >
           <input
             type="date"
@@ -177,7 +177,7 @@ export default function SearchBar({ className = '' }: { className?: string }) {
         </Segment>
 
         {tipo === 'hospedajes' && (
-          <Segment icon={Calendar} label={es ? 'Salida' : 'Check-out'} className="sm:flex-1">
+          <Segment icon={Calendar} label={es ? 'Salida' : 'Check-out'} className="lg:flex-1">
             <input
               type="date"
               min={desde || todayISO()}
@@ -188,7 +188,7 @@ export default function SearchBar({ className = '' }: { className?: string }) {
           </Segment>
         )}
 
-        <div className="relative sm:flex-1" ref={paxRef}>
+        <div className="relative lg:flex-1" ref={paxRef}>
           <button
             type="button"
             onClick={() => setPaxOpen((v) => !v)}
